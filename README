@@ -1,0 +1,19 @@
+
+Fallout: New Vegas Character Planner
+
+	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
+
+All libraries are under the /fonv_lib/ folder.
+
+The prototype.js file is only for the test page (fonv_lib_test_page.html)
+and is NOT required for the fonv_lib. I've included it the repository for
+convenience.
+
+NOTE:
+	
+	This library is NOT finished. There WILL be bugs/non-working components.
+Check the versions on each library to see where they're at.
+	
+	version 1.0.0 = 100% working
+
+Also, this repository is in a transitional state until I get it all set up.

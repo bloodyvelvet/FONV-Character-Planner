@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title> Fallout New Vegas Character Planner - Test Page </title>
+
+	<script type="text/javascript" src="prototype.js"></script>
+	<script type="text/javascript" src="./fonv_lib/fonv_lib.js"></script>
+
+	<script type="text/javascript">
+		/* gui is independent from fonv_lib.js */
+		//var charId = "fonvChar";
+		var domLoaded = false;
+		var initGui;
+		var ks = 0;
+		var loadingGui = false;
+
+		document.observe("dom:loaded", function() {
+			console.log("dom loaded");
+			initGui = setInterval("initGuiProcess()", 1000);
+		});
+
+		function initGuiProcess() {
+			ks++;
+			if (foChar.built && !loadingGui) {
+				loadingGui = true;
+				//build gui
+
+				var specialString='', skill;
+				for (special in specials) { //TODO add special values so +/- works
+					specialString += '<div id="'+flip(special)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+special+'</div><div id="sub_'+flip(special)+'" class="sub_button" onclick="foChar.addSpecial(\''+special+'\', getVal(\'val_'+flip(special)+'\')-1); updateGUI();">-</div><div id="add_'+flip(special)+'" class="add_button" onclick="foChar.addSpecial(\''+special+'\', getVal(\'val_'+flip(special)+'\')+1); updateGUI();">+</div><div id="val_'+flip(special)+'" class="char_val">'+foChar.specials[special].lvl+'</div>';
+				}
+				$('specials_list').innerHTML = specialString;
+
+				var skillString='', skill;
+				for (skill in skills) {
+					skillString += '<div id="'+flip(skill)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+skill+'</div><div id="sub_'+flip(skill)+'" class="sub_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')-1); updateGUI();">-</div><div id="add_'+flip(skill)+'" class="add_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')+1); updateGUI();">+</div><div id="val_'+flip(skill)+'" class="char_val">'+(foChar.skills[skill].base+foChar.skills[skill].alloc)+'</div>';
+				}
+				$('skills_list').innerHTML = skillString;
+
+				var traitString='', trait;
+				(traits._getTraitsArray()).each(function(trait) {
+					traitString += '<div id="'+flip(trait)+'" class="title" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+trait+'</div><div id="add_'+flip(trait)+'" class="add_button" onclick="addRemTrait(this.id); updateGUI();">+</div>';
+				});
+				$('traits_list').innerHTML = traitString;
+
+				var perkString='', perk;
+				var qualPerks = foChar._getQualifiedPerksArray();
+				for (perk in perks) {
+					perkString += '<div id="'+flip(perk)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
+					if (qualPerks.inArray(perk)) {
+						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
+					}else{
+						perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+					}
+					
+					perkString += '<div id="val_'+flip(perk)+'" class="char_val">'+getPerkVal(perk)+'</div>';
+					 //perkString += '<div id="'+flip(perk)+'" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
+				}
+				$('perks_list').innerHTML = perkString;
+
+				//generate char data
+				var charInfoString='', charInfo;
+				for (charInfo in foChar.charInfo) {
+					charInfoString += '<div id="'+flip(charInfo)+'">'+charInfo+': '+foChar.charInfo[charInfo]+'</div>';
+				}
+				$('char_misc').innerHTML = charInfoString;
+
+				clearInterval(initGui);
+			}
+			if (ks >= 30) {
+				console.log("GUI load time exceeded ("+ks+"), killing");
+				clearInterval(initGui);
+			}
+			updateGUI();
+		}
+
+		function addRemTrait(fromId) {
+			var trait = flip(fromId.replace("add_", ""));
+			console.log("addRemTrait", fromId, trait);
+			if ($(fromId).innerHTML == "-") {
+				foChar.removeTrait(trait);
+			}else{
+				foChar.addSPT(trait);
+			}
+		}
+		
+		function getSkillVal(skill) {
+			if (foChar.skills[skill]) {
+				if (fonv_lib.DEBUG) { console.log("getSkillVal: returning "+foChar.skills[skill].alloc+" for "+skill); }
+				return foChar.skills[skill].alloc;
+			}
+			if (fonv_lib.DEBUG) { console.log("getSkillVal: returning 0 for "+skill); }
+			return 0;
+		}
+		function getPerkVal(perk) {
+			if (foChar.perks[perk]) {
+				if (fonv_lib.DEBUG) { console.log("getPerkVal: returning "+foChar.perks[perk].rank+" for "+perk); }
+				return foChar.perks[perk].rank;
+			}
+			if (fonv_lib.DEBUG) { console.log("getPerkVal: returning 0 for "+perk); }
+			return 0;
+		}
+		function getVal(fromId) {
+			return parseInt($(fromId).innerHTML);
+		}
+		var prevDispInfo = '';
+		function dispInfo(forId, inId) {
+			if (inId == undefined) { inId = 'info_display'; }
+			//store previous for mouse out
+			if ($(inId)) { prevDispInfo = $(inId).innerHTML; }
+
+			//flip forId from id to val
+			forId = flip(forId);
+
+			//console.log("looking for info on:"+forId);
+			//find info
+			var dispString='';
+			if (specials[forId]) {
+				//console.log("	found special:"+specials[forId].desc);
+				var specialLvl = specials[forId];
+				for (special in specialLvl) {
+					if (special != "lvl") { //exclude all levels
+						dispString += '<div>'+special+': '+specialLvl[special]+'</div>';
+					}
+				};
+				dispString += '<hr /><div>Char Info (at current level):</div>';
+				specialLvl = specials[forId].lvl[foChar.specials[forId].lvl];
+				for (special in specialLvl) {
+					dispString += '<div>'+special+': '+specialLvl[special]+'</div>';
+				}
+			}else if (skills[forId])	{
+				//console.log("	found skill:"+skills[forId].desc);
+				dispString += skills[forId].desc;
+			}else if (perks[forId])	{
+				//console.log("	found perk:"+perks[forId].desc);
+				dispString += perks[forId].desc;
+				dispString += "<hr />";
+				dispString += "Available Ranks: "+perks[forId].availRanks+"<br />";
+				dispString += "Requirements: <br />";
+				for (requires in perks[forId].req) {
+					dispString += requires+": "+perks[forId].req[requires]+"<br />";
+				}
+				dispString += "Effects: <br />";
+				for (result in perks[forId].res) {
+					dispString += result+": "+perks[forId].res[result]+"<br />";
+				}
+			}else if (traits[forId])	{
+				//console.log("	found trait:"+traits[forId].desc);
+				dispString += traits[forId].desc;
+			}
+			
+			$(inId).innerHTML = dispString;
+			
+		}
+		function restoreDispInfo(inId) {
+			if (inId == undefined) { inId = 'info_display'; }
+			//console.log("called restoreDispInfo", inId);
+			if ($(inId)) { $(inId).innerHTML = prevDispInfo; }
+		}
+
+		/* changes spaces to underscore or vice-versa */
+		function flip(idOrVal) {
+			if (idOrVal.indexOf("_") > -1) {
+				return idOrVal.replace(/\_/g, " ");
+			}else{
+				return idOrVal.replace(/\s/g, "_");
+			}
+		}
+		/* return a default instead of null for prompt */
+		function promptWithDefault(title, defaultPromptVal, defaultVal) {
+			var defaultVal = defaultVal || "";
+			var resp = '';
+			if (defaultVal != "undefined") {
+				resp = prompt(title, defaultPromptVal);
+			}else{
+				resp = prompt(title);
+			}
+			if (resp == null) {
+				return defaultVal;
+			}
+			return resp;
+		}
+
+		function updateGUI() {
+			
+			//update traits
+			var addId, trait;
+			(traits._getTraitsArray()).each(function(trait) {
+				addId = 'add_'+flip(trait);
+				if (foChar.traits[trait]) {
+					if ($(addId)) { $(addId).innerHTML = '-'; }
+				}else{
+					if ($(addId)) { $(addId).innerHTML = '+'; }
+				}
+			});
+			//update specials
+			var special;
+			for (special in specials) {
+				$('val_'+flip(special)).innerHTML = foChar.specials[special].lvl;
+			}
+			//update skills
+			var skill;
+			for (skill in skills) {
+				$('val_'+flip(skill)).innerHTML = (foChar.skills[skill].base+foChar.skills[skill].alloc);
+			}
+			//generate char data
+			var charInfoString='', charInfo;
+			for (charInfo in foChar.charInfo) {
+				charInfoString += '<div id="'+flip(charInfo)+'" class="w100p">'+charInfo+': '+foChar.charInfo[charInfo];
+				switch (charInfo) {
+					case "APRegenRate":
+						charInfoString += ' ('+(1/foChar.charInfo[charInfo]).toFixed(2)+' secs)';
+						break;
+					case "critChance":
+					case "radRes":
+					case "poisonRes":
+					case "throwRate":
+						charInfoString += ' ('+(foChar.charInfo[charInfo]*100).toFixed(1)+'%)';
+						break;
+					case "carryWeight":
+						charInfoString += ' lbs';
+						break;
+					case "lvl":
+						if (foChar.charInfo[charInfo] < foChar.charInfo["lvlCap"]) {
+							charInfoString += ' <input type="button" value="level up" class="fright" onclick="foChar.levelUp('+foChar.charInfo[charInfo]+'); updateGUI();" />';
+						}
+						break;
+					case "name":
+						charInfoString += ' <input type="button" value="set" class="fright" onclick="foChar.charInfo[\'name\'] = promptWithDefault(\'Set new name\', \''+foChar.charInfo[charInfo]+'\'); updateGUI();" />';
+						break;
+					case "age":
+						charInfoString += ' <input type="button" value="set" class="fright" onclick="foChar.charInfo[\'age\'] = promptWithDefault(\'Set new age\', \''+foChar.charInfo[charInfo]+'\', 18); if (foChar.charInfo[\'age\'] == null) { foChar.charInfo[\'age\'] == 18; } updateGUI();" />';
+						break;
+					case "gender":
+						charInfoString += ' <input type="button" value="toggle" class="fright" onclick="if (foChar.charInfo[\'gender\'] == \'male\') { foChar.charInfo[\'gender\'] = \'female\'; }else{ foChar.charInfo[\'gender\'] = \'male\' } updateGUI();" />';
+						break;
+					case "hardcore":
+						charInfoString += ' <input type="button" value="toggle" class="fright" onclick="if (foChar.charInfo[\'hardcore\']) { foChar.charInfo[\'hardcore\'] = false; }else{ foChar.charInfo[\'hardcore\'] = true } updateGUI();" />';
+						break;
+					default:
+				}
+				charInfoString += '</div>';
+			}
+			$('char_misc').innerHTML = charInfoString;
+			var perkString='', perk;
+				var qualPerks = foChar._getQualifiedPerksArray();
+				for (perk in perks) {
+					perkString += '<div id="'+flip(perk)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
+					if (qualPerks.inArray(perk)) {
+						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
+					}else{
+						perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+					}
+					
+					perkString += '<div id="val_'+flip(perk)+'" class="char_val">'+getPerkVal(perk)+'</div>';
+					 //perkString += '<div id="'+flip(perk)+'" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
+				}
+				$('perks_list').innerHTML = perkString;
+		}
+
+	</script>
+
+	<link type="text/css" rel="stylesheet" href="fonv_lib_test_page.css" />
+</head>
+<body>
+
+<table>
+	<tr>
+		<td valign="top">
+			<div id="specials_cont">
+				<div id="specials_list"><!--  --></div>
+			</div>
+			<div id="skills_cont">
+				<div id="skills_list"><!--  --></div>
+			</div>
+			<div id="traits_cont">
+				<div id="traits_list"><!--  --></div>
+			</div>
+		</td>
+		<td valign="top">
+			<div id="char_misc_cont">
+				<div id="char_misc"><!--  --></div>
+			</div>
+		</td>
+		<td valign="top">
+			<div id="info_display"><!--  --></div>
+			<!--  -->
+		</td>
+		<td width="300" valign="top">
+			<div id="perks_cont">
+				<div id="perks_list"><!--  --></div>
+			</div>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

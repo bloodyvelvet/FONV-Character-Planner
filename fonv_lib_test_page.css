@@ -1,0 +1,114 @@
+body {
+	margin: 0;
+	padding: 0;
+	height: 900px;
+	background-color: #eee;
+}
+
+table {
+	height: 100%;
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
+}
+
+input {
+	font-size: 11px;
+	border-width: 1px;
+}
+
+.fright {
+	clear: right;
+	float: right;
+}
+.w100p {
+	width: 100%;
+}
+
+.add_button, .sub_button {
+	border: 1px solid #393;
+	float: right;
+	width: 25px;
+	cursor: pointer;
+	text-align: center;
+}
+.title {
+	border: 1px solid #393;
+	float: left;
+	width: 85%;
+}
+.title_withVal {
+	border: 1px solid #393;
+	float: left;
+	width: 70%;
+}
+.char_val {
+	border: 1px solid #393;
+	float: right;
+	width: 25px;
+	text-align: center;
+}
+.disabled {
+	cursor: default;
+	color: #666;
+}
+
+#specials_cont {
+	border: 1px solid #393;
+	width: 300px;
+}
+#specials_list {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+}
+
+#skills_cont {
+	border: 1px solid #393;
+	width: 300px;
+}
+#skills_list {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+}
+
+#traits_cont {
+	border: 1px solid #393;
+	width: 300px;
+}
+#traits_list {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+}
+
+#perks_cont {
+	border: 1px solid #393;
+	height: 900px;
+	width: 300px;
+}
+
+#perks_list {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+}
+
+#char_misc_cont {
+	border: 1px solid #393;
+	height: 900px;
+	width: 300px;
+	overflow-y: auto;
+}
+#char_misc_cont div {
+	height: 20px;
+}
+
+#info_display {
+	border: 1px solid #393;
+	height: 400px;
+	width: 400px;
+	overflow-y: auto;
+}

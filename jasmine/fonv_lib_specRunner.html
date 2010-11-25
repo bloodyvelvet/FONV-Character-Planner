@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Jasmine Test Runner - fonv_lib</title>
+  <link rel="stylesheet" type="text/css" href="lib/jasmine-1.0.1/jasmine.css">
+	<script type="text/javascript" src="prototype.js"></script>
+	<script type="text/javascript" src="lib/jasmine-1.0.1/jasmine.js"></script>
+	<script type="text/javascript" src="lib/jasmine-1.0.1/jasmine-html.js"></script>
+
+	<!-- include source files here... -->
+	<script type="text/javascript" src="src/fonv_lib/fonv_lib.js"></script>
+
+	<!-- include spec files here... -->
+	<script type="text/javascript" src="spec/fonv_lib-spec.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+	var initTests;
+	var ks = 0;
+	var loadingTests = false;
+	
+	document.observe("dom:loaded", function() {
+		initTests = setInterval("initTestsProcess()", 1000);
+	});
+
+	function initTestsProcess() {
+		ks++;
+		if (foChar.built && !loadingTests) {
+			loadingTests = true;
+			clearInterval(initTests);
+
+			jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+			jasmine.getEnv().execute();
+		}
+		if (ks >= 30) {
+			console.log("load time exceeded ("+ks+"), killing");
+			clearInterval(initTests);
+		}
+	}
+</script>
+
+</body>
+</html>

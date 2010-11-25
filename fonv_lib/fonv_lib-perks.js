@@ -200,7 +200,7 @@ var perks = {
 		desc: "While wearing light armor or no armor, you run 10% faster.",
 		req: {
 			charLvl: 4,
-			"Survial": 45
+			"Survival": 45
 		},
 		availRanks: 1,
 		res: {
@@ -912,7 +912,7 @@ var perks = {
 		req: {
 			charLvl: 20,
 			"Sneak": 80,
-			"Melle Weapons": 80
+			"Melee Weapons": 80
 		},
 		availRanks: 1,
 		res: {
@@ -1002,7 +1002,7 @@ var perks = {
 	"Abominable": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1012,7 +1012,7 @@ var perks = {
 	"Agility Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1022,7 +1022,7 @@ var perks = {
 	"Animal Control": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1032,7 +1032,7 @@ var perks = {
 	"Beautiful Beatdown": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1042,7 +1042,7 @@ var perks = {
 	"Bug Stomper": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1052,7 +1052,7 @@ var perks = {
 	"Charisma Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1062,7 +1062,7 @@ var perks = {
 	"Endurance Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1072,7 +1072,7 @@ var perks = {
 	"Enhanced Sensors": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1082,7 +1082,7 @@ var perks = {
 	"Intelligence Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1092,7 +1092,7 @@ var perks = {
 	"Lord Death": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1102,7 +1102,7 @@ var perks = {
 	"Luck Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1112,7 +1112,7 @@ var perks = {
 	"Mutant Massacrer": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1122,7 +1122,7 @@ var perks = {
 	"Monocyte Breeder": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1132,7 +1132,7 @@ var perks = {
 	"Perception Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1142,7 +1142,7 @@ var perks = {
 	"Ranger Takedown": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1152,7 +1152,7 @@ var perks = {
 	"Regular Maintenence": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1162,7 +1162,7 @@ var perks = {
 	"Scribe Assistant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1172,7 +1172,7 @@ var perks = {
 	"Spotter": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1182,7 +1182,7 @@ var perks = {
 	"Stealth Girl": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1192,7 +1192,7 @@ var perks = {
 	"Strength Implant": {
 		desc: "",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
@@ -1202,7 +1202,7 @@ var perks = {
 	"Sub-Dermal Armor": {
 		desc: "Sub-Dermal Armor info",
 		req: {
-			charLvl: 999
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {

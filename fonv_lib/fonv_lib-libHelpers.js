@@ -11,6 +11,19 @@ Helper functions should start with an underscore to help identify them.
 */
 var libHelpers = {}; //for autoload to detect this file as loaded
 
+if (typeof perks == "object") { //make sure original is loaded
+	/* return an array of perk names */
+	perks._getPerksArray = function() {
+		var perkArr = [];
+		for (var perk in perks) {
+			if (typeof perks[perk] == "object") { //only include objects
+				perkArr[perkArr.length] = perk;
+			}
+		}
+		return perkArr;
+	}
+}
+
 if (typeof traits == "object") { //make sure original is loaded
 	/* return an array of trait names */
 	traits._getTraitsArray = function() {
@@ -79,6 +92,14 @@ if (typeof foChar == "object" && typeof perks == "object") { //make sure origina
 			}
 		}else{
 			console.log("Pass in an Array of items to add.");
+		}
+	}
+
+	/* return perk rank */
+	foChar._getPerkRank = function(perk) {
+		if (foChar.perks[perk]) {
+			var perk = foChar.perks[perk];
+			return perk.rank;
 		}
 	}
 }

@@ -45,7 +45,7 @@
 
 				var perkString='', perk;
 				var qualPerks = foChar._getQualifiedPerksArray();
-				for (perk in perks) {
+				(perks._getPerksArray()).each(function(perk) {
 					perkString += '<div id="'+flip(perk)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
 					if (qualPerks.inArray(perk)) {
 						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
@@ -55,7 +55,7 @@
 					
 					perkString += '<div id="val_'+flip(perk)+'" class="char_val">'+getPerkVal(perk)+'</div>';
 					 //perkString += '<div id="'+flip(perk)+'" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
-				}
+				});
 				$('perks_list').innerHTML = perkString;
 
 				//generate char data

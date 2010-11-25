@@ -105,8 +105,10 @@ var foChar = {
 	},
 	levelUp: function(_lvl) { //if passing in a val, it's FROM level
 		var _lvl = parseInt(_lvl) || 0;
-		if (_lvl == 0 || _lvl > foChar.charInfo.lvlCap) {
+
+		if (_lvl == 0 || _lvl >= foChar.charInfo.lvlCap) {
 			if (fonv_lib.DEBUG) { console.log("Cannot set Char lvl to "+_lvl); }
+			return false;
 		}
 		_lvl++;
 		if (fonv_lib.DEBUG) { console.log("Char level up "+foChar.charInfo.lvl+" -> "+_lvl); }
@@ -172,10 +174,12 @@ var foChar = {
 					//check qualifications
 					if (foChar.checkQualification(_title)) {
 						foChar.traits[_title] = traits[_title];
+						return true;
 					}
 				}else{
 					if (fonv_lib.DEBUG) { console.log("Char already has two traits."); }
 				}
+				return false;
 			}
 		}else if (skills[_title]) {
 			if (_rank > 100) {
@@ -293,10 +297,21 @@ var foChar = {
 				typeVal = traits[_title].req[req];
 				break;
 			case "special":
-				typeVal = specials[_title];
+				typeVal = req;
 				break;
 			case "KNOWN":
 				typeVal = req;
+			case "UNKNOWN":
+				if (perks[_title]) {
+					typeVal = perks[_title].req[req];
+				}else if (specials[_title]) {
+					typeVal = req;
+				}else if (skills[_title]) {
+					typeVal = req;
+				}else if (traits[_title]) {
+					typeVal = traits[_title].req[req];
+				}
+
 			default:
 				//do eval here
 				if (_title.toString() == "eval") {
@@ -369,6 +384,10 @@ var foChar = {
 		switch(_title) {
 			case "charLvl":
 				evalBy = ">=";
+				typeVal = req;
+				break;
+			case "gender":
+				evalBy = "==";
 				typeVal = req;
 				break;
 			default:
@@ -590,10 +609,12 @@ var foChar = {
 		}
 	},
 	get: function(setting) {
-		//console.log("get: ", setting);
 		switch (setting) {
 			case "charLvl":
 				return foChar.charInfo.lvl;
+				break;
+			case "gender":
+				return foChar.charInfo.gender;
 				break;
 		}
 		if (traits[setting]) {
@@ -605,6 +626,8 @@ var foChar = {
 		if (specials[setting]) {
 			return foChar.specials[setting].lvl;
 		}
+
+		return -1; //fail
 
 		if (fonv_lib.DEBUG) { console.log("Can't find: "+setting); }
 	}

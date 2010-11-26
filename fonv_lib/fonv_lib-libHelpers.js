@@ -37,6 +37,7 @@ if (typeof traits == "object") { //make sure original is loaded
 	}
 	/*	return an array of trait requirements
 	 *		returns in duals like: NAME, VAL, NAME, VAL, etc
+	 *		an empty Array means trait has no requirements
 	 */
 	traits._getTraitReqArray = function(traitName) {
 		if (traits[traitName]) {
@@ -50,6 +51,7 @@ if (typeof traits == "object") { //make sure original is loaded
 	}
 	/*	return an array of trait results
 	 *		returns in duals like: NAME, VAL, NAME, VAL, etc
+	 *		an empty Array means trait is not in use
 	 */
 	traits._getTraitResArray = function(traitName) {
 		if (traits[traitName]) {
@@ -70,7 +72,9 @@ if (typeof foChar == "object" && typeof perks == "object") { //make sure origina
 		perksArr = [];
 		for (perk in perks) {
 			if (foChar.checkQualification(perk)) {
-				perksArr[perksArr.length] = perk;
+				if (typeof perks[perk] == "object") { //only include objects
+					perksArr[perksArr.length] = perk;
+				}
 			}
 		}
 		return perksArr;

@@ -307,16 +307,20 @@ describe("check adding perks - qualifications", function() {
 		foChar.skills["Survival"].alloc = 90;
 		foChar.skills["Unarmed"].alloc = 90;
 
-		fonv_lib.DEBUG = true;
+		//fonv_lib.DEBUG = true;
 
 		runs( function() {
 			foChar.addSPT(perkArr[perkArrIndex], 1);
 		});
 		
 		if (
-			perkArr[perkArrIndex] == "Action Girl"
+			perkArr[perkArrIndex] == "Action Girl" ||
+			perkArr[perkArrIndex] == "Cherchez La Femme" ||
+			perkArr[perkArrIndex] == "Black Widow"
 		) {
 			foChar.charInfo["gender"] = "female";
+		}else{
+			foChar.charInfo["gender"] = "male";
 		}
 		
 	});
@@ -759,3 +763,485 @@ describe("check adding perks - qualifications", function() {
 
 });
 
+describe("check adding perks - disqualifications", function() {
+
+	var emptyObject = {};
+	var perkArrIndex = 0;
+	var perkArr = perks._getPerksArray();
+
+	/* reset foChar so stats are reset */
+	runs( function() {
+		foChar.reset();
+	});
+	beforeEach(function () {
+
+		//fonv_lib.DEBUG = true;
+
+		runs( function() {
+			foChar.addSPT(perkArr[perkArrIndex], 1);
+		});
+		
+		/* make sure we have the opposite of perk reqs */
+		if (
+			perkArr[perkArrIndex] == "Action Girl" ||
+			perkArr[perkArrIndex] == "Cherchez La Femme" ||
+			perkArr[perkArrIndex] == "Black Widow"
+		) {
+			foChar.charInfo["gender"] = "male";
+		}
+		
+		if (
+			perkArr[perkArrIndex] == "Action Boy" ||
+			perkArr[perkArrIndex] == "Confirmed Bachelor" ||
+			perkArr[perkArrIndex] == "Lady Killer"
+		) {
+			foChar.charInfo["gender"] = "female";
+		}
+		/*	slightly modify the misc perks reqs
+		 *	so a reset char doesn't auto-qualify
+		 */
+		if (perks[perkArr[perkArrIndex]].req["charLvl"] == 0) {
+			perks[perkArr[perkArrIndex]].req["charLvl"] = 99;
+		}
+		
+	});
+	afterEach(function () {
+		delete foChar.perks[perkArr[perkArrIndex]];
+		/*	change modified misc perks reqs
+		 *	so they're back to default
+		 */
+		if (perks[perkArr[perkArrIndex]].req["charLvl"] == 99) {
+			perks[perkArr[perkArrIndex]].req["charLvl"] = 0;
+		}
+		perkArrIndex++;
+	});
+
+	it("should not qualify for Black Widow", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Friend of the Night", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Heave, Ho!", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Hunter", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Intense Training", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Rapid Reload", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Retention", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Swift Learner", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Cannibal", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Comprehension", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Educated", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Entomologist", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Rad Child", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Run 'n Gun", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Travel Light", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Bloody Mess", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Demolition Expert", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Ferocious Loyalty", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Fortune Finder", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Gunslinger", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Hand Loader", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Lead Belly", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Shotgun Surgeon", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for The Professional", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Toughness", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Vigilant Recycler", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Commando", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Cowboy", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Living Anatomy", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Pack Rat", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Quick Draw", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Rad Resistance", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Scrounger", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Stonewall", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Strong Back", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Super Slam", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Terrifying Presence", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Animal Friend", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Finesse", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Here and Now", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Math Wrath", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Miss Fortune", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Mister Sandman", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Mysterious Stranger", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Nerd Rage!", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Night Person", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Plasma Spaz", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Fast Metabolism", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Ghastly Scavenger", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Hit the Deck", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Life Giver", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Long Haul", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Piercing Strike", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Pyromaniac", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Robotics Expert", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Silent Running", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Sniper", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Splash Damage", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Unstoppable Force", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Adamantium Skeleton", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Center of Mass", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Chemist", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Jury Rigging", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Light Step", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Purifier", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Action Boy", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Action Girl", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Better Criticals", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Chem Resistant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Meltdown", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Tag!", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Weapon Handling", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Computer Whiz", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Concentrated Fire", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Infiltrator", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Paralyzing Palm", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Explorer", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Grim Reaper's Sprint", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Ninja", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Solar Powered", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Laser Commander", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Nuka Chemist", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Spray and Pray", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Slayer", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Nerves of Steel", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Rad Absorption", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Abominable", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Agility Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Animal Control", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Beautiful Beatdown", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Bug Stomper", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Charisma Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Endurance Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Enhanced Sensors", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Intelligence Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Lord Death", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Luck Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Mutant Massacrer", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Monocyte Breeder", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Perception Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Ranger Takedown", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Regular Maintenence", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Scribe Assistant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Spotter", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Stealth Girl", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Strength Implant", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+	it("should not qualify for Sub-Dermal Armor", function() {
+		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+});

@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Traits Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.0.0
+version: 1.1.0
 
 This library creates a traits object available to the page containing all trait
 information for use with the foChar library.
@@ -37,7 +37,7 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
-			crit: 0.03,
+			critChance: 0.03,
 			weapDecay: 0.15
 		}
 	},
@@ -46,7 +46,7 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
-			fireSpeed: 0.20,
+			fireRate: 0.20,
 			accuracy: -0.20
 		}
 	},
@@ -56,7 +56,9 @@ var traits = {
 			eval: "<,PE:10"
 		},
 		availRanks: 1,
-		res: {}
+		res: {
+			MISC: "While wearing any type of glasses, you have +1 PER. Without glasses you have -1 PER."
+		}
 	},
 	"Good Natured": {
 		desc: "You're Good Natured at heart, more prone to solving problems with your mind than violence. You gain +5 to Barter, Medicine, Repair, Science, and Speech, but have -5 to Energy Weapons, Explosives, Melee Weapons, and Unarmed.",
@@ -78,7 +80,9 @@ var traits = {
 		desc: "Your melee and unarmed attacks do more damage, but less critical hit damage.",
 		req: {},
 		availRanks: 1,
-		res: {}
+		res: {
+			MISC: "Your melee and unarmed attacks do more damage, but less critical hit damage."
+		}
 	},
 	"Kamikaze": { //TODO
 		desc: "",
@@ -111,7 +115,7 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
-			fireSpeed: -0.20,
+			fireRate: -0.20,
 			accuracy: 0.20
 		}
 	},

@@ -28,7 +28,7 @@
 
 	function initTestsProcess() {
 		ks++;
-		if (foChar.built && !loadingTests) {
+		if ((foChar) && (foChar.built && !loadingTests)) {
 			loadingTests = true;
 			clearInterval(initTests);
 

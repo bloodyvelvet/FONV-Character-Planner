@@ -17,7 +17,9 @@ input {
 	font-size: 11px;
 	border-width: 1px;
 }
-
+. tag_button {
+	width: 40px;
+}
 .fright {
 	clear: right;
 	float: right;

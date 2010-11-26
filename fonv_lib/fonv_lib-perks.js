@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Perks Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.0.0
+version: 1.1.0
 
 This library creates a perks object available to the page containing all perk
 information for use with the foChar library.
@@ -35,12 +35,49 @@ var perks = {
 	"Black Widow": {
 		desc: "In combat you do +10% damage against male/female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
 		req: {
-			charLvl: 2
+			charLvl: 2,
+			gender: "female"
 		},
 		availRanks: 1,
 		res: {
 			dmgOppSex: 0.1,
 			MISC: "unique dialogue options when dealing with the opposite sex."
+		}
+	},
+	"Lady Killer": {
+		desc: "In combat you do +10% damage against male/female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
+		req: {
+			charLvl: 2,
+			gender: "male"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the opposite sex."
+		}
+	},
+	"Cherchez La Femme": {
+		desc: "10% extra damage on male targets and unique dialogue options with some characters of the same sex.",
+		req: {
+			charLvl: 2,
+			gender: "female"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the same sex."
+		}
+	},
+	"Confirmed Bachelor": {
+		desc: "10% extra damage on male targets and unique dialogue options with some characters of the same sex.",
+		req: {
+			charLvl: 2,
+			gender: "male"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the same sex."
 		}
 	},
 	"Friend of the Night": {
@@ -75,7 +112,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			animalDmgCrit: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
+			animalDmgcritChance: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
 		}
 	},
 	"Intense Training": {
@@ -85,6 +122,7 @@ var perks = {
 		},
 		availRanks: 10,
 		res: {
+			specialDistPoints: 1,
 			MISC: "S.P.E.C.I.A.L +1"
 		}
 	},
@@ -471,7 +509,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			crit: 0.05
+			critChance: 0.05
 		}
 	},
 	"Here and Now": {
@@ -822,10 +860,11 @@ var perks = {
 	"Tag!": {
 		desc: "The Tag! perk allows you to select a fourth Skill to be a Tag skill, which instantly raises it by 15 points.",
 		req: {
-			charLvl: 16
+			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
+			taggedSkillsCap: 1,
 			MISC: "Select a fourth skill to be a Tag Skill (instantly raises it by 15 points)"
 		}
 	},

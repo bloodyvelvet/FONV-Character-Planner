@@ -10,7 +10,7 @@ creates and handles all character data.
 
 */
 var foChar = {
-	version: "0.7.0", //<1.0.0 until finalized
+	version: "0.8.0", //<1.0.0 until finalized
 	built: false,
 	loading: setInterval("foChar.initChar()", 500),
 	ks: 0,
@@ -23,6 +23,7 @@ var foChar = {
 		xp: 0,
 		gender: 'male',
 		hardcore: false,
+			limbDecay: 0,
 		specialDistPoints: 0, //base 33 + 1 point in each special
 		RAD: 0,
 			radRes: 0, //base - EN * 0.02, max 85%
@@ -35,40 +36,43 @@ var foChar = {
 		AP: 65, //TODO base? - base AP determined by 65 + Agility x3
 			APRegenRate: 0.060, //without perk/traits
 		SP: 0, //TODO base? 12+(INT/2) - if .5, every other level rounds up - verify
+			SPgainRate: 3, //per level
+			SPgainRateFromBooks: 3, //per book
+		skillPointsFromMags: 10, //temp from mags
 		DT: 0, //TODO base?
 		critChance: 0, //TODO base - LUCK * 0.01
 			critDmg: 0, //TODO base
 		dmg: 0, //TODO base?
 			dmgOppSex: 0, //TODO base?
+			dmgSameSex: 0, //TODO base?
 			dmgExplosives: 0, //TODO base?
 			meleeDmg: 0, //TODO base?
 			animalDmg: 0, //TODO base?
 			animalDmgCrit: 0, //TODO base 0%?
 			insectDmg: 0, //TODO base?
-		carryWeight: 0, //base - 150 + (ST*10)
+		fireRate: 0, //TODO base?
+		accuracy: 0, //TODO base?
+			accuracyMoving: 0, //TODO base?
+		reloadSpeed: 1, //TODO base?
 		throwRate: 0, //base - 0.4 + (AG*0.01)
 			throwSpeed: 0, //base - fireRate
 			throwRange: 0, //TODO base? Range is calculated as 3 * ST
-		reloadSpeed: 1, //TODO base?
+		companionNerve: 0, //TODO base?
+		carryWeight: 0, //base - 150 + (ST*10)
 		expEarnRate: 1, //TODO base?
 		karma: 0, //base - range bad,neutral,good [-2500 - -250][-249 - 249][250 - 2500], title per level
 			karmaTitle: '',
-		SPgainRate: 3, //per level
-		SPgainRateFromBooks: 3, //per book
-		skillPointsFromMags: 10, //temp from mags
-		fireRate: 0, //TODO base?
-		accuracy: 0, //TODO base?
-		accuracyMoving: 0, //TODO base?
 		moveSpeed: 0,  //TODO base?
-		companionNerve: 0 //TODO base?
+		weapDecay: 0  //TODO base?
 	},
 	traits: {},
-		traitsMax: 2, //allow for glitch
+		traitsCap: 2, //allow for glitch
 	perks: {}, //TODO add check for max perks
-		perksMax: 15, //allow for glitch
+		perksCap: 15, //allow for glitch
 	specials: {},
 	skills: {},
 	taggedSkills: [],
+		taggedSkillsCap: 3, //4 if Tag! perk is taken
 	initChar: function() {
 		if (fonv_lib.DEBUG) { console.log("checking init"); }
 		foChar.ks++;
@@ -82,13 +86,17 @@ var foChar = {
 			foChar.built = true;
 			foChar.initSkills();
 			foChar.initSpecials();
+			foChar.reCalculateCharInfo();
 			clearInterval(foChar.loading);
 			if (fonv_lib.DEBUG) { console.log("foChar.built",foChar.built); }
+			return true;
 		}
 		if (foChar.ks >= 60) {
 			if (fonv_lib.DEBUG) { console.log("Load time exceeded ("+foChar.ks+"secs), killing load"); }
 			clearInterval(foChar.loading);
+			return true;
 		}
+		return false;
 	},
 	initSpecials: function() {
 		foChar.charInfo.specialDistPoints = 33;
@@ -148,15 +156,40 @@ var foChar = {
 	addSPT: function(_title, _rank) {
 		if (fonv_lib.DEBUG) { console.log("Adding Skill/Perk/Trait: "+_title+" rank: "+_rank); }
 
-		if ((_rank == "undefined" || _rank < 1) && !skills[_title]) {
-			_rank = 1; //only non-skills can have zero
+		if ((_rank == "undefined")) {
+			_rank = 1; //only non-skills can have zero, but perk removal can pass 0
 		}
 		if (perks[_title]) {
-			if (foChar.checkQualification(_title)) {
-				if (fonv_lib.DEBUG) { console.log("addSPT: adding "+_title+" rank "+_rank); }
-				foChar.perks[_title] = { rank: _rank };
+			if (foChar.perks[_title]) {
+				//character has perk
+				if (foChar.perks[_title].rank < _rank) {
+					//add perk _rank
+					if (foChar.checkQualification(_title)) {
+						if (fonv_lib.DEBUG) { console.log("addSPT: adding "+_title+" rank "+_rank); }
+						foChar.perks[_title].rank = _rank;
+						foChar.calculations.calculatePerksBonus(_title);
+						return true;
+					}else{
+						if (fonv_lib.DEBUG) { console.log("addSPT: NOT adding "+_title+" rank "+_rank); }
+					}
+				}else{
+					//remove perk
+					if (fonv_lib.DEBUG) { console.log("addSPT: removing "+_title+" rank "+_rank); }
+					foChar.perks[_title].rank = _rank;
+					foChar.calculations.calculatePerksBonus(_title, "remove");
+					return true;
+				}
 			}else{
-				if (fonv_lib.DEBUG) { console.log("addSPT: NOT adding "+_title+" rank "+_rank); }
+				//character does not have perk
+				//add perk
+				if (foChar.checkQualification(_title)) {
+					if (fonv_lib.DEBUG) { console.log("addSPT: adding "+_title+" rank "+_rank); }
+					foChar.perks[_title] = { rank: _rank };
+					foChar.calculations.calculatePerksBonus(_title);
+					return true;
+				}else{
+					if (fonv_lib.DEBUG) { console.log("addSPT: NOT adding "+_title+" rank "+_rank); }
+				}
 			}
 		}else if (traits[_title]) {
 			
@@ -170,10 +203,12 @@ var foChar = {
 				for (t in foChar.traits) {
 					traitSize++;
 				}
-				if (traitSize < foChar.traitsMax) {
+				if (traitSize < foChar.traitsCap) {
 					//check qualifications
 					if (foChar.checkQualification(_title)) {
 						foChar.traits[_title] = traits[_title];
+						foChar.calculations.calculateTraitsBonus(_title);
+						foChar.reCalculateCharInfo();
 						return true;
 					}
 				}else{
@@ -206,15 +241,38 @@ var foChar = {
 					foChar.skills[_title].alloc = _rank;
 				};
 				foChar.charInfo.SP = foChar.calculations.calculateAvailSP();
+				return true;
 			}
 		}else{
 			if (fonv_lib.DEBUG) { console.log("Not defined: "+_title); }
 		}
+		return false;
+	},
+	tagSkill: function(_title) {
+		//check cap
+		if (foChar.taggedSkills.length < foChar["taggedSkillsCap"]) {
+				foChar.taggedSkills[foChar.taggedSkills.length] = _title;
+				foChar.reCalculateCharInfo();
+		}else{
+			if (fonv_lib.DEBUG) { console.log("Cannot tag skill, char has max skills tagged ("+foChar.taggedSkillCap+")"); }
+		}
+	},
+	untagSkill: function(_title) {
+		var tagged = [];
+		for (var i = 0; i < foChar.taggedSkills.length; i++) {
+			if (foChar.taggedSkills[i] != _title) {
+				tagged[tagged.length] = foChar.taggedSkills[i];
+			}
+		}
+		foChar.taggedSkills = tagged;
+		foChar.reCalculateCharInfo();
 	},
 	removeTrait: function(_title) {
 		if (fonv_lib.DEBUG) { console.log("Removing Char trait: "+_title); }
 		if (foChar.traits[_title]) {
+			foChar.calculations.calculateTraitsBonus(_title, "remove");
 			delete foChar.traits[_title];
+			foChar.reCalculateCharInfo();
 			if (fonv_lib.DEBUG) { console.log("	Char trait: "+_title+" removed."); }
 		}else{
 			if (fonv_lib.DEBUG) { console.log("	Char does not have trait: "+_title); }
@@ -450,6 +508,8 @@ var foChar = {
 	reCalculateCharInfo: function() {
 		//recalc special bonus(es), requires a special abbreviation
 		foChar.calculations.calculateSpecialBonus(arguments[0]);
+		//recalc bonus(es) for tagged skills, must be after calculateSpecialBonus
+		foChar.calculations.calculateTaggedSkillsBonus();
 		//recalc SP
 		foChar.charInfo.SP = foChar.calculations.calculateAvailSP();
 		//recalc HP
@@ -586,15 +646,109 @@ var foChar = {
 			for (special in foChar.specials) {
 				foChar.calculations.calculateBonusByType(special);
 			}
+			//now, check traits
+			for (trait in foChar.traits) {
+				foChar.calculations.calculateTraitsBonus(trait);
+			}
 		},
-		calculateBonusByType: function(special) {
-			var aSkills = specials[special].affSkills;
-			var affLevel = foChar.specials[special].opt.skill;
-			var skillRef = foChar.skills;
-			for (var i=0; i<aSkills.length; i++) {
-				var cSkill = aSkills[i].toString();
-				if (foChar.skills[cSkill] != "undefined") {
-					skillRef[cSkill].base = skillRef[cSkill].base + affLevel;
+		calculateTaggedSkillsBonus: function() {
+			for (var i = 0; i < foChar.taggedSkills.length; i++) {
+				foChar.calculations.calculateBonusByType(foChar.taggedSkills[i]);
+			}
+		},
+		calculateBonusByType: function(type) {
+			if (specials[type]) {
+				var aSkills = specials[type].affSkills;
+				var affLevel = foChar.specials[type].opt.skill;
+				var skillRef = foChar.skills;
+				for (var i=0; i<aSkills.length; i++) {
+					var cSkill = aSkills[i].toString();
+					if (foChar.skills[cSkill] != "undefined") {
+						skillRef[cSkill].base = skillRef[cSkill].base + affLevel;
+					}
+				}
+			}
+			//taged skills
+			if (skills[type]) {
+				if (foChar.skills[type]) {
+					foChar.skills[type].base = foChar.skills[type].base+15;
+				}
+			}
+		},
+		calculatePerksBonus: function(_title, action) {
+			var action = action || "add";
+			if (perks[_title]) {
+				if (action == "add") {
+					//add
+					for (res in perks[_title].res) {
+						if (specials[res]) {
+							foChar.specials[res].lvl = foChar.specials[res].lvl+perks[_title].res[res];
+						}else if (skills[res]) {
+							foChar.skills[res].base = foChar.skills[res].base+perks[_title].res[res];
+						}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
+							foChar.charInfo[res] = foChar.charInfo[res]+perks[_title].res[res];
+						}else{
+							if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+						}
+					}
+				}else{
+					//remove
+					for (res in perks[_title].res) {
+						if (specials[res]) {
+							specials[res].lvl = specials[res].lvl-perks[_title].res[res];
+						}else if (skills[res]) {
+							skills[res].base = skills[res].base-perks[_title].res[res];
+						}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
+							foChar.charInfo[res] = foChar.charInfo[res]-perks[_title].res[res];
+						}else{
+							if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+						}
+					}
+				}
+			}else{
+				if (fonv_lib.DEBUG) { console.log("Cannot calc Perk Bonus for "+_title+", perk not found"); }
+			}
+		},
+		calculateTraitsBonus: function(_title, action) {
+			var action = action || "add";
+			if (action == "add") {
+				//add
+				for (res in traits[_title].res) {
+					if (specials[res]) {
+						foChar.specials[res].lvl = specials[res].lvl+traits[_title].res[res];
+					}else if (skills[res]) {
+						foChar.skills[res].base = foChar.skills[res].base+traits[_title].res[res];
+					}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
+						foChar.charInfo[res] = foChar.charInfo[res]+traits[_title].res[res];
+					}else{
+						if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+						//console.log("Unknown result "+res.toString()+" in "+_title);
+					}
+					for (skill in foChar.skills) {
+						if (foChar.skills[res] && foChar.skills[res].base < 0) {
+							foChar.skills[res].base = 0; //TODO is this right with allocation?
+						}
+					}
+				}
+			}else{
+				//remove
+				for (res in traits[_title].res) {
+					if (specials[res]) {
+						specials[res].lvl = specials[res].lvl-traits[_title].res[res];
+					}else if (skills[res]) {
+						console.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
+						skills[res].base = skills[res].base-traits[_title].res[res];
+						console.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
+					}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
+						foChar.charInfo[res] = foChar.charInfo[res]-traits[_title].res[res];
+					}else{
+						if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+					}
+					for (skill in foChar.skills) {
+						if (foChar.skills[res] && foChar.skills[res].base < 0) {
+							foChar.skills[res].base = 0; //TODO is this right with allocation?
+						}
+					}
 				}
 			}
 		}
@@ -630,6 +784,70 @@ var foChar = {
 		return -1; //fail
 
 		if (fonv_lib.DEBUG) { console.log("Can't find: "+setting); }
+	},
+	reset: function() {
+		delete foChar.charInfo; //clear out anything added/updated
+		foChar.charInfo = { //reset
+			name: 'The Courier',
+			age: 18,
+			lvl: 1,
+				lvlCap: 30, //for DLC
+			xp: 0,
+			gender: 'male',
+			hardcore: false,
+			specialDistPoints: 0, //base 33 + 1 point in each special
+			RAD: 0,
+				radRes: 0, //base - EN * 0.02, max 85%
+				poisonRes: 0, //base - (EN-1) * 5, max?
+			H20: 0,
+			SLP: 0,
+			FOD: 0,
+			HP: 0, //TODO base - using fo3 rules
+				HPRegenRate: 0, //base - 0 minus perks, 1 per 10sec with implant
+			AP: 65, //TODO base? - base AP determined by 65 + Agility x3
+				APRegenRate: 0.060, //without perk/traits
+			SP: 0, //TODO base? 12+(INT/2) - if .5, every other level rounds up - verify
+			DT: 0, //TODO base?
+			critChance: 0, //TODO base - LUCK * 0.01
+				critDmg: 0, //TODO base
+			dmg: 0, //TODO base?
+				dmgOppSex: 0, //TODO base?
+				dmgExplosives: 0, //TODO base?
+				meleeDmg: 0, //TODO base?
+				animalDmg: 0, //TODO base?
+				animalDmgCrit: 0, //TODO base 0%?
+				insectDmg: 0, //TODO base?
+			carryWeight: 0, //base - 150 + (ST*10)
+			throwRate: 0, //base - 0.4 + (AG*0.01)
+				throwSpeed: 0, //base - fireRate
+				throwRange: 0, //TODO base? Range is calculated as 3 * ST
+			reloadSpeed: 1, //TODO base?
+			expEarnRate: 1, //TODO base?
+			karma: 0, //base - range bad,neutral,good [-2500 - -250][-249 - 249][250 - 2500], title per level
+				karmaTitle: '',
+			SPgainRate: 3, //per level
+			SPgainRateFromBooks: 3, //per book
+			skillPointsFromMags: 10, //temp from mags
+			fireRate: 0, //TODO base?
+			accuracy: 0, //TODO base?
+			accuracyMoving: 0, //TODO base?
+			moveSpeed: 0,  //TODO base?
+			companionNerve: 0 //TODO base?
+		}
+		//reset SPT and specials
+		delete foChar.skills;
+		foChar.skills = {};
+		delete foChar.perks;
+		foChar.perks = {};
+		delete foChar.traits;
+		foChar.traits = {};
+		delete foChar.specials;
+		foChar.specials = {};
+
+		//reinit
+		foChar.initChar();
+
+		return true;
 	}
 }
 

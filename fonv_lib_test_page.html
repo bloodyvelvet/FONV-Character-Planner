@@ -21,7 +21,7 @@
 
 		function initGuiProcess() {
 			ks++;
-			if (foChar.built && !loadingGui) {
+			if ((foChar) && (foChar.built && !loadingGui)) {
 				loadingGui = true;
 				//build gui
 
@@ -33,7 +33,13 @@
 
 				var skillString='', skill;
 				for (skill in skills) {
-					skillString += '<div id="'+flip(skill)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+skill+'</div><div id="sub_'+flip(skill)+'" class="sub_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')-1); updateGUI();">-</div><div id="add_'+flip(skill)+'" class="add_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')+1); updateGUI();">+</div><div id="val_'+flip(skill)+'" class="char_val">'+(foChar.skills[skill].base+foChar.skills[skill].alloc)+'</div>';
+					skillString += '<div id="'+flip(skill)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+skill;
+					if ((foChar.taggedSkills).inArray(skill)) {
+						skillString += '<div id="tag_'+flip(skill)+'" class="fright" tag_button><input type="button" value="untag" class="fright" onclick="foChar.untagSkill(\''+skill+'\'); updateGUI();" /></div>';
+					}else{
+						skillString += '<div id="tag_'+flip(skill)+'" class="fright tag_button"><input type="button" value="tag" class="fright" onclick="foChar.tagSkill(\''+skill+'\'); updateGUI();" /></div>';
+					}
+					skillString += '</div><div id="sub_'+flip(skill)+'" class="sub_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')-1); updateGUI();">-</div><div id="add_'+flip(skill)+'" class="add_button" onclick="foChar.addSPT(\''+skill+'\', getSkillVal(\''+skill+'\')+1); updateGUI();">+</div><div id="val_'+flip(skill)+'" class="char_val">'+(foChar.skills[skill].base+foChar.skills[skill].alloc)+'</div>';
 				}
 				$('skills_list').innerHTML = skillString;
 
@@ -50,7 +56,11 @@
 					if (qualPerks.inArray(perk)) {
 						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
 					}else{
-						perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+						if (foChar.perks[perk]) {
+							perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div class="add_button disabled">x</div>';
+						}else{
+							perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+						}
 					}
 					
 					perkString += '<div id="val_'+flip(perk)+'" class="char_val">'+getPerkVal(perk)+'</div>';
@@ -76,7 +86,7 @@
 
 		function addRemTrait(fromId) {
 			var trait = flip(fromId.replace("add_", ""));
-			console.log("addRemTrait", fromId, trait);
+			//console.log("addRemTrait", fromId, trait);
 			if ($(fromId).innerHTML == "-") {
 				foChar.removeTrait(trait);
 			}else{
@@ -202,6 +212,11 @@
 			var skill;
 			for (skill in skills) {
 				$('val_'+flip(skill)).innerHTML = (foChar.skills[skill].base+foChar.skills[skill].alloc);
+				if ((foChar.taggedSkills).inArray(skill)) {
+						$('tag_'+flip(skill)).innerHTML = ' <input type="button" value="untag" class="fright" onclick="foChar.untagSkill(\''+skill+'\'); updateGUI();" />';
+				}else{
+						$('tag_'+flip(skill)).innerHTML = ' <input type="button" value="tag" class="fright" onclick="foChar.tagSkill(\''+skill+'\'); updateGUI();" />';
+				}
 			}
 			//generate char data
 			var charInfoString='', charInfo;
@@ -249,7 +264,11 @@
 					if (qualPerks.inArray(perk)) {
 						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
 					}else{
-						perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+						if (foChar.perks[perk]) {
+							perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div class="add_button disabled">x</div>';
+						}else{
+							perkString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+						}
 					}
 					
 					perkString += '<div id="val_'+flip(perk)+'" class="char_val">'+getPerkVal(perk)+'</div>';

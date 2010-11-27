@@ -268,6 +268,7 @@ describe("check foChar.levelUp()", function() {
 	it("should still be level 30 (level cap test)", function() {
 		expect(foChar.charInfo.lvl).toEqual(30);
 	});
+
 });
 
 describe("check adding perks - qualifications", function() {
@@ -1242,6 +1243,109 @@ describe("check adding perks - disqualifications", function() {
 
 	it("should not qualify for Sub-Dermal Armor", function() {
 		expect(foChar.perks).toEqual(emptyObject);
+	});
+
+});
+
+describe("check adding/removing traits", function() {
+	
+	var emptyObject = {};
+
+	var traitArrIndex = 0;
+	var traitArr = traits._getTraitsArray();
+
+	beforeEach(function () {
+		runs( function() {
+			foChar.addSPT(traitArr[traitArrIndex]);
+		});
+	});
+	afterEach(function () {
+		foChar.removeTrait(traitArr[traitArrIndex]);
+		traitArrIndex++;
+	});
+
+	it("should have trait Built to Destroy", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Fast Shot", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Four Eyes", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Good Natured", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Heavy Handed", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Kamikaze", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Loose Cannon", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Small Frame", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Trigger Discipline", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have trait Wild Wasteland", function() {
+		expect(foChar.traits[traitArr[traitArrIndex]]).toBeDefined();
+	});
+
+	it("should have removed all traits", function() {
+		expect(foChar.traits).toEqual(emptyObject);
+	});
+
+});
+
+
+describe("check traits cap", function() {
+	//reset traits
+	runs( function() {
+		foChar.traits = {};
+	});
+
+	var traitSize = 0;
+
+	//add two traits
+	runs( function() {
+		foChar.addSPT("Heavy Handed");
+	});
+	runs( function() {
+		foChar.addSPT("Kamikaze");
+	});
+	
+	it("should have two traits", function() {
+		for (var t in foChar.traits) {
+			traitSize++;
+		}
+		expect(traitSize).toEqual(foChar.traitsCap);
+		traitSize = 0;
+	});
+
+	//attempt third traits add
+	runs( function() {
+		foChar.addSPT("Wild Wasteland");
+	});
+
+
+	it("should still have two traits", function() {
+		for (var t in foChar.traits) {
+			traitSize++;
+		}
+		expect(traitSize).toEqual(foChar.traitsCap);
 	});
 
 });

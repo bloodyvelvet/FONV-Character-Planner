@@ -101,7 +101,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			throwRange: 0 //TODO range increase +2 ST for throw calc
+			MISC: "range increase ST+2 for throw range calculaion."
 		}
 	},
 	"Hunter": {
@@ -112,7 +112,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			animalDmgcritChance: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
+			animalDmgCrit: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
 		}
 	},
 	"Intense Training": {
@@ -146,6 +146,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			magAffectLength: 60, //TODO verify. base + this value
 			MISC: "Skill magazines last three times as long."
 		}
 	},
@@ -167,7 +168,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Eat a corpse to regain HP."
+			MISC: "Eat a corpse to regain HP, lose karma"
 		}
 	},
 	"Comprehension": {
@@ -872,7 +873,7 @@ var perks = {
 		desc: "Weapon Strength Requirements are now 2 points lower than normal for you.",
 		req: {
 			charLvl: 16,
-			eval: "<,ST:10" //TODO eval?
+			eval: "<,ST:10"
 		},
 		availRanks: 1,
 		res: {

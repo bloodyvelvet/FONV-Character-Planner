@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Traits Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.1.0
+version: 1.2.0
 
 This library creates a traits object available to the page containing all trait
 information for use with the foChar library.
@@ -70,6 +70,7 @@ var traits = {
 			"Repair": 5,
 			"Science": 5,
 			"Speech": 5,
+			"Guns": -5,
 			"Energy Weapons": -5,
 			"Explosives": -5,
 			"Melee Weapons": -5,
@@ -81,14 +82,19 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
+			meleeDmg: 0.20,
+			critDmgMelee: -0.60,
 			MISC: "Your melee and unarmed attacks do more damage, but less critical hit damage."
 		}
 	},
-	"Kamikaze": { //TODO
+	"Kamikaze": { //TODO description
 		desc: "",
 		req: {},
 		availRanks: 1,
-		res: {}
+		res: {
+			AP: 10,
+			DT: -2
+		}
 	},
 	"Loose Cannon": {
 		desc: "From Frag Grenades to Throwing Spears, you can throw weapons 30% faster at the cost of 25% less range.",
@@ -102,7 +108,7 @@ var traits = {
 	"Small Frame": {
 		desc: "Due to your small size, you have +1 AGL but your limbs are more easily crippled.",
 		req: {
-			AG: "<10"
+			eval: "<,AG:10"
 		},
 		availRanks: 1,
 		res: {

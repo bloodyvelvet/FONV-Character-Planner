@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Specials Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.0.0
+version: 1.1.0
 
 This library creates a specials object available to the page containing all
 special information for use with the foChar library.
@@ -25,61 +25,61 @@ var specials = {
 		affSkills: ["Melee Weapons"],
 		lvl: {
 			1: {
-				meleeDmg: .5,
+				meleeDmg: 0.05,
 				carryWeight: 160,
 				skill: 2,
 				title: "Wet Noodle"
 			},
 			2: {
-				meleeDmg: 1.0,
+				meleeDmg: 0.10,
 				carryWeight: 170,
 				skill: 4,
 				title: "Beached Jellyfish"
 			},
 			3: {
-				meleeDmg: 1.5,
+				meleeDmg: 0.15,
 				carryWeight: 180,
 				skill: 6,
 				title: "Doughy Baby"
 			},
 			4: {
-				meleeDmg: 2.0,
+				meleeDmg: 0.20,
 				carryWeight: 190,
 				skill: 8,
 				title: "Lightweight"
 			},
 			5: {
-				meleeDmg: 2.5,
+				meleeDmg: 0.25,
 				carryWeight: 200,
 				skill: 10,
 				title: "Average Joe"
 			},
 			6: {
-				meleeDmg: 3.0,
+				meleeDmg: 0.30,
 				carryWeight: 210,
 				skill: 12,
 				title: "Barrel Chested"
 			},
 			7: {
-				meleeDmg: 3.5,
+				meleeDmg: 0.35,
 				carryWeight: 220,
 				skill: 14,
 				title: "Beach Bully"
 			},
 			8: {
-				meleeDmg: 4.0,
+				meleeDmg: 0.40,
 				carryWeight: 230,
 				skill: 16,
 				title: "Circus Strongman"
 			},
 			9: {
-				meleeDmg: 4.5,
+				meleeDmg: 0.45,
 				carryWeight: 240,
 				skill: 18,
 				title: "Doomsday Pecs"
 			},
 			10: {
-				meleeDmg: 5.0,
+				meleeDmg: 0.50,
 				carryWeight: 250,
 				skill: 20,
 				title: "Hercules' Bigger Cousin"
@@ -389,52 +389,52 @@ var specials = {
 			1: {
 				skill: 1,
 				title: "13 Pitch-black Coats",
-				crit: 0.01
+				critChance: 0.01
 			},
 			2: {
 				skill: 1,
 				title: "Broken Gypsy Mirror",
-				crit: 0.02
+				critChance: 0.02
 			},
 			3: {
 				skill: 2,
 				title: "Sickly Albatross",
-				crit: 0.03
+				critChance: 0.03
 			},
 			4: {
 				skill: 2,
 				title: "Spilled Salt",
-				crit: 0.04
+				critChance: 0.04
 			},
 			5: {
 				skill: 3,
 				title: "Coin Flip",
-				crit: 0.05
+				critChance: 0.05
 			},
 			6: {
 				skill: 3,
 				title: "Stacked Deck",
-				crit: 0.06
+				critChance: 0.06
 			},
 			7: {
 				skill: 4,
 				title: "Lucky 7",
-				crit: 0.07
+				critChance: 0.07
 			},
 			8: {
 				skill: 4,
 				title: "Leprechaun's Foot",
-				crit: 0.08
+				critChance: 0.08
 			},
 			9: {
 				skill: 5,
 				title: "21-Leaf Clover",
-				crit: 0.09
+				critChance: 0.09
 			},
 			10: {
 				skill: 5,
 				title: "Two-headed Coin Flip",
-				crit: 0.10
+				critChance: 0.10
 			}
 		}
 	}

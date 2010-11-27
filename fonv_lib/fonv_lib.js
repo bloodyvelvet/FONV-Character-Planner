@@ -50,7 +50,7 @@ var fonv_lib = {
 	version: '1.0.0',
 	scriptName: 'fonv_lib.js',
 	scriptPath: '',
-	DEBUG: true,//false, //true here prints a lot to the console, firebug recommended
+	DEBUG: false, //true here prints a lot to the console, firebug recommended
 	libs: [
 		'fonv_lib-perks',      //add perks     -
 		'fonv_lib-karma',      //add karma      |

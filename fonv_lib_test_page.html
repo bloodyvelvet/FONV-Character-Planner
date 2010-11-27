@@ -230,10 +230,18 @@
 					case "radRes":
 					case "poisonRes":
 					case "throwRate":
+					case "meleeDmg":
+					case "companionNerve":
 						charInfoString += ' ('+(foChar.charInfo[charInfo]*100).toFixed(1)+'%)';
 						break;
 					case "carryWeight":
 						charInfoString += ' lbs';
+						break;
+					case "magAffectLength":
+						charInfoString += ' secs';
+						break;
+					case "throwRange":
+						charInfoString += ' feet';
 						break;
 					case "lvl":
 						if (foChar.charInfo[charInfo] < foChar.charInfo["lvlCap"]) {
@@ -241,7 +249,7 @@
 						}
 						break;
 					case "name":
-						charInfoString += ' <input type="button" value="set" class="fright" onclick="foChar.charInfo[\'name\'] = promptWithDefault(\'Set new name\', \''+foChar.charInfo[charInfo]+'\'); updateGUI();" />';
+						charInfoString += ' <input type="button" value="set" class="fright" onclick="foChar.charInfo[\'name\'] = promptWithDefault(\'Set new name\', \''+foChar.charInfo[charInfo]+'\', \'The Courier\'); updateGUI();" />';
 						break;
 					case "age":
 						charInfoString += ' <input type="button" value="set" class="fright" onclick="foChar.charInfo[\'age\'] = promptWithDefault(\'Set new age\', \''+foChar.charInfo[charInfo]+'\', 18); if (foChar.charInfo[\'age\'] == null) { foChar.charInfo[\'age\'] == 18; } updateGUI();" />';
@@ -303,6 +311,7 @@
 		</td>
 		<td valign="top">
 			<div id="info_display"><!--  --></div>
+			<input type="button" onclick="foChar.reset(); updateGUI();" value="reset foChar" />
 			<!--  -->
 		</td>
 		<td width="300" valign="top">

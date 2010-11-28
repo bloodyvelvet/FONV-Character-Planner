@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Perks Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.1.0
+version: 1.2.1
 
 This library creates a perks object available to the page containing all perk
 information for use with the foChar library.
@@ -30,10 +30,82 @@ If using "AND", char should have ALL requirements. If "OR", char can have ANY
 of the requirements. If using "PERK", REQVAL is either true or false,
 checking if char should or should not have the required perk.
 
+For perks with multiple ranks, the result is handled slightly differently.
+
+If the rank is accumulative equally per level (i.e. each level +1), then
+ranks do not need to be defined. If the res values change per perk level
+(i.e. rank 1: +1, rank 2: +1, rank 3: +2), then individual ranks should be
+defined.
+
+So if adding rank 3 in the above example, the char should get:
+	+1+1+2, or +4 total.
+
 */
 var perks = {
+	"Action Boy": {
+		desc: "With the Action Boy perk, you gain an additional 15 Action Points to use in V.A.T.S.",
+		req: {
+			charLvl: 16,
+			AG: 6,
+			gender: "male"
+		},
+		availRanks: 2,
+		res: {
+			APvats: 15, //per level
+			MISC: "+15 Action Points in V.A.T.S."
+		}
+	},
+	"Action Girl": {
+		desc: "With the Action Girl perk, you gain an additional 15 Action Points to use in V.A.T.S.",
+		req: {
+			charLvl: 16,
+			AG: 6,
+			gender: "female"
+		},
+		availRanks: 2,
+		res: {
+			APvats: 15, //per level
+			MISC: "+15 Action Points in V.A.T.S."
+		}
+	},
+	"Adamantium Skeleton": {
+		desc: "With the Adamantium Skeleton perk, your limbs only receive 50% of the damage they normally would.",
+		req: {
+			charLvl: 14
+		},
+		availRanks: 1,
+		res: {
+			limbDecay: 0.50,
+			MISC: "Limbs only receive 50% damage"
+		}
+	},
+	"Animal Friend": {
+		desc: "At the first rank of this perk, animals simply won't attack. At the second rank, they will eventually come to your aid in combat, but never against another animal.",
+		req: {
+			charLvl: 10,
+			CH: 6,
+			"Survival": 45
+		},
+		availRanks: 2,
+		res: {
+			animalAgro: 10, //per level
+			MISC: "Rank 1: Certain Animals do not attack, Rank 2: They and tamed animals will come to your aid"
+		}
+	},
+	"Better Criticals": {
+		desc: "With the Better Criticals perk, you gain a 50% damage bonus every time a critical hit is scored on an opponent.",
+		req: {
+			charLvl: 16,
+			PE: 6,
+			LK: 6
+		},
+		availRanks: 1,
+		res: {
+			critDmg: 0.5
+		}
+	},
 	"Black Widow": {
-		desc: "In combat you do +10% damage against male/female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
+		desc: "In combat, you do +10% damage against male opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
 		req: {
 			charLvl: 2,
 			gender: "female"
@@ -44,121 +116,14 @@ var perks = {
 			MISC: "unique dialogue options when dealing with the opposite sex."
 		}
 	},
-	"Lady Killer": {
-		desc: "In combat you do +10% damage against male/female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
+	"Bloody Mess": {
+		desc: "With the Bloody Mess perk, characters and creatures you kill will often explode into a red, gut-ridden, eyeball-strewn paste. Fun! Oh, and you'll do 5% extra damage with all weapons.",
 		req: {
-			charLvl: 2,
-			gender: "male"
+			charLvl: 6
 		},
 		availRanks: 1,
 		res: {
-			dmgSameSex: 0.1,
-			MISC: "unique dialogue options when dealing with the opposite sex."
-		}
-	},
-	"Cherchez La Femme": {
-		desc: "10% extra damage on male targets and unique dialogue options with some characters of the same sex.",
-		req: {
-			charLvl: 2,
-			gender: "female"
-		},
-		availRanks: 1,
-		res: {
-			dmgSameSex: 0.1,
-			MISC: "unique dialogue options when dealing with the same sex."
-		}
-	},
-	"Confirmed Bachelor": {
-		desc: "10% extra damage on male targets and unique dialogue options with some characters of the same sex.",
-		req: {
-			charLvl: 2,
-			gender: "male"
-		},
-		availRanks: 1,
-		res: {
-			dmgSameSex: 0.1,
-			MISC: "unique dialogue options when dealing with the same sex."
-		}
-	},
-	"Friend of the Night": {
-		desc: "You are a true friend of the night. Your eyes adapt quickly to low-light conditions indoors and when darkness falls across the wasteland.",
-		req: {
-			charLvl: 2,
-			PE: 6,
-			"Sneak": 30
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Your eyes adapt quickly to low-light conditions."
-		}
-	},
-	"Heave, Ho!": {
-		desc: "Quite an arm you've got there. All thrown weapons fly farther and faster for you.",
-		req: {
-			charLvl: 2,
-			ST: 5,
-			"Explosives": 30,
-		},
-		availRanks: 1,
-		res: {
-			MISC: "range increase ST+2 for throw range calculaion."
-		}
-	},
-	"Hunter": {
-		desc: "In combat, you do +75% Critical Damage against animals and mutated animals.",
-		req: {
-			charLvl: 2,
-			"Survival": 30
-		},
-		availRanks: 1,
-		res: {
-			animalDmgCrit: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
-		}
-	},
-	"Intense Training": {
-		desc: "With the Intense Training perk, you can put a single point into any of your S.P.E.C.I.A.L attributes.",
-		req: {
-			charLvl: 2
-		},
-		availRanks: 10,
-		res: {
-			specialDistPoints: 1,
-			MISC: "S.P.E.C.I.A.L +1"
-		}
-	},
-	"Rapid Reload": {
-		desc: "Rapid Reload makes all of your weapon reloads 25% faster than normal.",
-		req: {
-			charLvl: 2,
-			"Guns": 30,
-			AG: 5
-		},
-		availRanks: 1,
-		res: {
-			reloadSpeed: 0.25
-		}
-	},
-	"Retention": {
-		desc: "With the Retention perk, the bonuses granted by skill magazines last three times as long.",
-		req: {
-			charLvl: 2,
-			IN: 5
-		},
-		availRanks: 1,
-		res: {
-			magAffectLength: 60, //TODO verify. base + this value
-			MISC: "Skill magazines last three times as long."
-		}
-	},
-	"Swift Learner": {
-		desc: "With each rank in the Swift Learner perk, you gain an additional 10% to total Experience Points whenever Experience Points are earned.",
-		req: {
-			charLvl: 2,
-			IN: 4
-		},
-		availRanks: 3,
-		res: {
-			expEarnRate: 0.1
+			dmg: 0.5
 		}
 	},
 	"Cannibal": {
@@ -171,6 +136,64 @@ var perks = {
 			MISC: "Eat a corpse to regain HP, lose karma"
 		}
 	},
+	"Center of Mass": {
+		desc: "You don't fool around with fancy trick shots. Straight to the midsection and down they go. In V.A.T.S., you do an extra 15% damage with attacks targeting the torso.",
+		req: {
+			charLvl: 14,
+			"Guns": 70
+		},
+		availRanks: 1,
+		res: {
+			MISC: "In V.A.T.S., you do an additional 15% damage when targeting the torso."
+		}
+	},
+	"Chemist": {
+		desc: "With the Chemist perk, any chems you take last twice as long.",
+		req: {
+			charLvl: 14,
+			"Medicine": 60
+		},
+		availRanks: 1,
+		res: {
+			chemDur: 2,
+			MISC: "Increased duration for chem effects"
+		}
+	},
+	"Chem Resistant": {
+		desc: "Having the Chem Resistant perk means you're 50% less likely to develop an addiction to chems, like Psycho or Jet.",
+		req: {
+			charLvl: 16,
+			"Medicine": 60
+		},
+		availRanks: 1,
+		res: {
+			chemAddictionChance: -0.50,
+			MISC: "50% less addiction chance"
+		}
+	},
+	"Cherchez La Femme": {
+		desc: "In combat, you do +10% damage against female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the same sex.",
+		req: {
+			charLvl: 2,
+			gender: "female"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the same sex."
+		}
+	},
+	"Commando": {
+		desc: "While using a rifle (or similar one-handed weapon), your accuracy in V.A.T.S. is significantly increased.",
+		req: {
+			charLvl: 8
+		},
+		availRanks: 1,
+		res: {
+			accuracyVats: 0.25,
+			MISC: "	V.A.T.S. accuracy with two-handed weapons increased."
+		}
+	},
 	"Comprehension": {
 		desc: "With the Comprehension perk, you gain double the bonus from reading magazines and one additional skill point  whenever a skill book is read.",
 		req: {
@@ -180,7 +203,68 @@ var perks = {
 		availRanks: 1,
 		res: {
 			SPgainRateFromBooks: 1,
-			skillPointsFromMags: 10
+			skillPointsFromMags: 10 //This is not in G.E.C.K.?
+		}
+	},
+	"Computer Whiz": {
+		desc: "Fail a hack attempt and get locked out of a computer? Not if you're a Computer Whiz! With this perk, you can attempt to re-hack any computer you were previously locked out of.",
+		req: {
+			charLvl: 18,
+			IN: 7,
+			"Science": 70
+		},
+		availRanks: 1,
+		res: {
+			ignoreLockTerminal: 1,
+			MISC: "Another attempt to hack any computer you were previously locked out of."
+		}
+	},
+	"Concentrated Fire": {
+		desc: "With Concentrated Fire, your accuracy to hit any body part in V.A.T.S. increases slightly with each subsequent hit on that body part.",
+		req: {
+			charLvl: 18,
+			"Energy Weapons": 60,
+			"Guns": 60
+		},
+		availRanks: 1,
+		res: {
+			MISC: "	Chance to hit any body part in V.A.T.S. increases slightly with each subsequent hit on that body part."
+		}
+	},
+	"Confirmed Bachelor": {
+		desc: "In combat, you do +10% damage against male opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the same sex.",
+		req: {
+			charLvl: 2,
+			gender: "male"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the same sex."
+		}
+	},
+	"Cowboy": {
+		desc: "You do 25% more damage when using any revolver, lever-action firearm, dynamite, knife, or hatchet.",
+		req: {
+			charLvl: 8,
+			"Guns": 45,
+			"Melee Weapons": 45
+		},
+		availRanks: 1,
+		res: {
+			dmgCowboyWeapons: 0.25,
+			MISC: "25 percent more damage when using any revolver, lever-action firearm, dynamite, knife, or hatchet."
+		}
+	},
+	"Demolition Expert": {
+		desc: "With each rank of this perk, all of your explosive weapons do an additional 20% damage.",
+		req: {
+			charLvl: 6,
+			"Explosives": 50
+		},
+		availRanks: 3,
+		res: {
+			dmgExplosives: 0.20 //per level
 		}
 	},
 	"Educated": {
@@ -198,73 +282,32 @@ var perks = {
 		desc: "With the Entomologist perk, you do an extra 50% damage every time you attack a mutated insect, like the Radroach, Giant Mantis, or Radscorpian.",
 		req: {
 			charLvl: 4,
-			"Survival": 45,
-			IN: 4
+			IN: 4,
+			"Survival": 45
 		},
 		availRanks: 1,
 		res: {
 			insectDmg: 0.5
 		}
 	},
-	"Rad Child": {
-		desc: "You truly are a rad child. As you go through the increasingly devastating stages of radiation sickness, you will regenerate more and more health.",
+	"Explorer": {
+		desc: "When you choose the Explorer perk, every location in the world is revealed on your map. So get out there and explore!",
 		req: {
-			charLvl: 4,
-			"Survival": 70
+			charLvl: 20
 		},
 		availRanks: 1,
 		res: {
-			HPRegenRate: 0 //TODO regen rate?
-			/*
-			 * Minor Radiation Poisoning - HP +2 every second
-			 * Advanced Radiation Poisoning - HP +4 every second
-			 * Critical radiation poisoning - HP +6 every second
-			 * Deadly radiation poisoning - HP +8 every second 
-			 */
+			MISC: "Every location in the world is revealed on your map"
 		}
 	},
-	"Run 'n Gun": {
-		desc: "The Run 'n Gun perk reduces accuracy penalties with one-handed Guns and Energy Weapons while walking or running.",
+	"Fast Metabolism": {
+		desc: "With the Fast Metabolism perk, you gain a 20% Health bonus when using Stimpaks.",
 		req: {
-			charLvl: 4,
-			eval: "OR,Guns:45,Energy Weapons:45"
+			charLvl: 12
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Better accuracy with one-handed ranged weapons.",
-			accuracyMoving: 0 //TODO rate?
-		}
-	},
-	"Travel Light": {
-		desc: "While wearing light armor or no armor, you run 10% faster.",
-		req: {
-			charLvl: 4,
-			"Survival": 45
-		},
-		availRanks: 1,
-		res: {
-			moveSpeed: 0.1
-		}
-	},
-	"Bloody Mess": {
-		desc: "With the Bloody Mess perk, characters and creatures you kill will often explode into a red, gut-ridden, eyeball-strewn paste. Fun! Oh, and you'll do 5% extra damage with all weapons.",
-		req: {
-			charLvl: 6
-		},
-		availRanks: 1,
-		res: {
-			dmg: 0.5
-		}
-	},
-	"Demolition Expert": {
-		desc: "With each rank of this perk, all of your explosive weapons do an additional 20% damage.",
-		req: {
-			charLvl: 6,
-			"Explosives": 50
-		},
-		availRanks: 1,
-		res: {
-			dmgExplosives: 0.2
+			MISC: "20% Health bonus when using Stimpaks"
 		}
 	},
 	"Ferocious Loyalty": {
@@ -278,6 +321,16 @@ var perks = {
 			MISC: "When your HP drops below 50%, Companions gain a bonus to their DT"
 		}
 	},
+	"Finesse": {
+		desc: "With the Finesse perk you have a higher chance to score a critical hit on an opponent in combat, equivalent to 5 extra points of Luck.",
+		req: {
+			charLvl: 10
+		},
+		availRanks: 1,
+		res: {
+			MISC: "LK+5 for critChance calc"
+		}
+	},
 	"Fortune Finder": {
 		desc: "With the Fortune Finder perk, you'll find considerably more Nuka-Cola caps in containers than you normally would.",
 		req: {
@@ -289,6 +342,40 @@ var perks = {
 			MISC: "Considerably more bottle caps will be found in stockpiles."
 		}
 	},
+	"Friend of the Night": {
+		desc: "You are a true friend of the night. Your eyes adapt quickly to low-light conditions indoors and when darkness falls across the wasteland.",
+		req: {
+			charLvl: 2,
+			PE: 6,
+			"Sneak": 30
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Your eyes adapt quickly to low-light conditions."
+		}
+	},
+	"Ghastly Scavenger": {
+		desc: "With Ghastly Scavenger, when you're in Sneak mode, you gain the option to eat a Super Mutant or Feral Ghoul corpse to regain Health. Every time you feed, you lose Karma, and if the act is witnessed, it is considered a crime against nature.",
+		req: {
+			charLvl: 12,
+			eval: "PERK,Cannibal:true"
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Regain Health by feeding on Super Mutant or Feral Ghoul corpses"
+		}
+	},
+	"Grim Reaper's Sprint": {
+		desc: "If you kill a target in V.A.T.S., 20 Action Points are restored upon exiting V.A.T.S.",
+		req: {
+			charLvl: 20
+		},
+		availRanks: 1,
+		res: {
+			APkillReward: 20,
+			MISC: "If you kill a target in V.A.T.S., 20 AP are restored upon exiting V.A.T.S. mode."
+		}
+	},
 	"Gunslinger": {
 		desc: "While using a pistol (or similar one-handed weapon), your accuracy in V.A.T.S. is significantly increased.",
 		req: {
@@ -296,6 +383,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			accuracyVatsPistol: 0.25,
 			MISC: "While using a pistol (or similar one-handed weapon), your chance to hit in V.A.T.S. is increased by 25%"
 		}
 	},
@@ -307,85 +395,153 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			ammoItemChance: 1,
 			MISC: "Recover ammo casings more often and all ammo recipes are unlocked."
+		}
+	},
+	"Heave, Ho!": {
+		desc: "Quite an arm you've got there. All thrown weapons fly farther and faster for you.",
+		req: {
+			/* G.E.C.K. has the reqs as AND & OR, which I believe makes it AND */
+			charLvl: 2,
+			ST: 5, //G.E.C.K. has this as OR
+			"Explosives": 30, //G.E.C.K. has this as AND
+		},
+		availRanks: 1,
+		res: {
+			MISC: "range increase ST+2 for throw range calculaion."
+		}
+	},
+	"Here and Now": {
+		desc: "The Here and Now perk immediately grants an additional experience level, complete with all the advantages that brings.",
+		req: {
+			charLvl: 10,
+			eval: "<,charLvl:30"
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Gain one additional experience level"
+		}
+	},
+	"Hit the Deck": {
+		desc: "Your extensive familiarity with Explosives allows you to ignore a portion of their damage. Your Damage Threshold is increased by 50% against any and all Explosives--even your own.",
+		req: {
+			charLvl: 12,
+			"Explosives": 70
+		},
+		availRanks: 1,
+		res: {
+			DTexplosives: 0.50,
+			MISC: "+50% DT when using explosives."
+		}
+	},
+	"Hunter": {
+		desc: "In combat, you do +75% Critical Damage against animals and mutated animals.",
+		req: {
+			charLvl: 2,
+			"Survival": 30
+		},
+		availRanks: 1,
+		res: {
+			animalDmgCrit: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
+		}
+	},
+	"Infiltrator": {
+		desc: "With Infiltrator, if a lock is broken, and can't normally be picked again, you can attempt to pick it again one more time. This includes locks previously broken by a \"Force Lock\" attempt.",
+		req: {
+			charLvl: 18,
+			PE: 7,
+			"Lockpick": 70
+		},
+		availRanks: 1,
+		res: {
+			ignoreBrokenLock: 1,
+			MISC: "Another attempt to pick any broken lock."
+		}
+	},
+	"Intense Training": {
+		desc: "With the Intense Training perk, you can put a single point into any of your S.P.E.C.I.A.L attributes.",
+		req: {
+			charLvl: 2
+		},
+		availRanks: 10,
+		res: {
+			specialDistPoints: 1, //per rank
+			MISC: "S.P.E.C.I.A.L +1"
+		}
+	},
+	"Jury Rigging": {
+		desc: "You possess the amazing ability to repair any item using a roughly similar item. Fix a Trail Carbine with a Hunting Rifle, a Plasma Defender with a Laser Pistol, or even Power Armor with Metal Armor. How does it work? Nobody knows... except you.",
+		req: {
+			charLvl: 14,
+			"Repair": 90
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Repair any item using a roughly similar item."
+		}
+	},
+	"Lady Killer": {
+		desc: "In combat, you do +10% damage against female opponents. Outside of combat, you'll sometimes have access to unique dialogue options when dealing with the opposite sex.",
+		req: {
+			charLvl: 2,
+			gender: "male"
+		},
+		availRanks: 1,
+		res: {
+			dmgSameSex: 0.1,
+			MISC: "unique dialogue options when dealing with the opposite sex."
+		}
+	},
+	"Laser Commander": {
+		desc: "From the humble Laser Pistol to the might Gatling Laser, you do 15% more damage and have +10% chance to critically hit with any laser weapon.",
+		req: {
+			charLvl: 22,
+			"Energy Weapons": 90
+		},
+		availRanks: 1,
+		res: {
+			dmgLaserWeapons: 0.15,
+			critChanceLaserWeapons: 0.10,
+			MISC: "+15 percent damage and +10 percent chance to critically hit with any laser weapon"
 		}
 	},
 	"Lead Belly": {
 		desc: "With the Lead Belly perk, you take 50% less radiation every time you drink from an irradiated water source.",
 		req: {
+			/* G.E.C.K. has the reqs as AND & OR, which I believe makes it AND */
 			charLvl: 6,
-			EN: 6,
-			"Survival": 40
+			EN: 5, //G.E.C.K. has this as AND
+			"Survival": 40 //G.E.C.K. has this as OR
 		},
 		availRanks: 1,
 		res: {
+			radFromConsumables: -0.50,
 			MISC: "50% less radiation when consuming irradiated food and drink."
 		}
 	},
-	"Shotgun Surgeon": {
-		desc: "Your precision with a scattergun is something to behold. When using shotguns, regardless of ammunition used, you ignore an additional 10 points of a target's Damage Threshold.",
+	"Life Giver": {
+		desc: "With the Life Giver perk, you gain an additional 30 Hit Points.",
 		req: {
-			charLvl: 6,
-			"Guns": 45
+			charLvl: 12,
+			EN: 6
 		},
 		availRanks: 1,
 		res: {
-			MISC: "When using shotguns, regardless of ammunition used, you ignore an additional 10 points of a target's damage threshold."
+			HP: 30
 		}
 	},
-	"The Professional": {
-		desc: "Up close and personal, that's how you like it. Your Sneak Attack Criticals with pistols, revolvers, and submachine guns, whether Guns or Energy Weapons, all inflict an additional 20% damage.",
+	"Light Step": {
+		desc: "With the Light Step perk, you'll never set off an enemy's mines or floor-based traps.",
 		req: {
-			charLvl: 6,
-			"Sneak": 70
+			charLvl: 14,
+			AG: 6,
+			PE: 6
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Your sneak attack criticals with pistols, revolvers, and submachine guns, whether guns or energy weapons, all inflict an additional 20 percent damage."
-		}
-	},
-	"Toughness": {
-		desc: "With the Toughness perk, you gain +3 to overall Damage Threshold. This perk may be taken twice, with the second rank granting an additional +3.",
-		req: {
-			charLvl: 6,
-			EN: 5
-		},
-		availRanks: 2,
-		res: {
-			DT: 3
-		}
-	},
-	"Vigilant Recycler": {
-		desc: "Waste not, want not. When you use Energy Weapons, you are more likely to recover drained ammunition. You also have more efficient recycling recipes available at the Workbench.",
-		req: {
-			charLvl: 6,
-			"Science": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Recover drained ammo more often for energy weapons and all recipes for recycling recipes are unlocked."
-		}
-	},
-	"Commando": {
-		desc: "While using a rifle (or similar one-handed weapon), your accuracy in V.A.T.S. is significantly increased.",
-		req: {
-			charLvl: 8
-		},
-		availRanks: 1,
-		res: {
-			MISC: "	V.A.T.S. accuracy with two-handed weapons increased."
-		}
-	},
-	"Cowboy": {
-		desc: "You do 25% more damage when using any revolver, lever-action firearm, dynamite, knife, or hatchet.",
-		req: {
-			charLvl: 8,
-			"Guns": 45,
-			"Melee Weapons": 45
-		},
-		availRanks: 1,
-		res: {
-			MISC: "25 percent more damage when using any revolver, lever-action firearm, dynamite, knife, or hatchet."
+			mineExplodeChance: -1,
+			MISC: "Never set off enemy mines or floor-based traps"
 		}
 	},
 	"Living Anatomy": {
@@ -396,131 +552,22 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			dmgHumanoids: 0.05,
+			seeEnemyHealth: 1,
 			MISC: "Allows you to see the health and DT of any target. Also grants +5% damage against humans and non-feral ghouls."
 		}
 	},
-	"Pack Rat": {
-		desc: "You have learned the value of careful packing. Items with a weight of 2 or less weigh half as much for you.",
+	"Long Haul": {
+		desc: "You have learned how to pack mountains of gear for the Long Haul. Being over-encumbered no longer prevents you from using Fast Travel.",
 		req: {
-			charLvl: 8,
-			IN: 5,
+			charLvl: 12,
+			EN: 6,
 			"Barter": 70
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Items with a weight of two or less weigh half as much for you."
-		}
-	},
-	"Quick Draw": {
-		desc: "Quick Draw makes all of your weapon equipping and holstering 50% faster.",
-		req: {
-			charLvl: 8,
-			AG: 5
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Equipping and holstering becomes 50% faster."
-		}
-	},
-	"Rad Resistance": {
-		desc: "Rad Resistance allows you to -- what else? -- resist radiation. This perk grants an additional 25% to Radiation Resistance.",
-		req: {
-			charLvl: 8,
-			EN: 5
-		},
-		availRanks: 1,
-		res: {
-			radRes: 0.25
-		}
-	},
-	"Scrounger": {
-		desc: "With the Scrounger perk, you'll find considerably more ammunition in containers than you normally would.",
-		req: {
-			charLvl: 8,
-			LK: 5
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Find more ammo in containers"
-		}
-	},
-	"Stonewall": {
-		desc: "You gain +5 Damage Threshold against all Melee Weapons and Unarmed attacks and cannot be knocked down in combat.",
-		req: {
-			charLvl: 8,
-			ST: 6,
-			EN: 6
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+5 to DT versus Unarmed attacks and Melee Weapons. You cannot be knocked down in combat."
-		}
-	},
-	"Strong Back": {
-		desc: "With the Strong Back perk, you can carry 50 more pounds of equipment.",
-		req: {
-			charLvl: 8,
-			ST: 5,
-			EN: 5
-		},
-		availRanks: 1,
-		res: {
-			carryWeight: 50
-		}
-	},
-	"Super Slam": {
-		desc: "All Melee Weapons (except thrown) and Unarmed attacks have a chance of knocking your target down.",
-		req: {
-			charLvl: 8,
-			ST: 6,
-			"Melee Weapons": 45
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Unarmed and melee weapon attacks have a chance of knocking down your opponent."
-		}
-	},
-	"Terrifying Presence": {
-		desc: "In some conversations, you gain the ability to initiate combat while terrifying a mob of opponents, sending them fleeing for safety.",
-		req: {
-			charLvl: 8,
-			"Speech": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Enemies flee for 5 seconds after leaving dialogue"
-		}
-	},
-	"Animal Friend": {
-		desc: "At the first rank of this perk, animals simply won't attack. At the second rank, they will eventually come to your aid in combat, but never against another animal.",
-		req: {
-			charLvl: 10,
-			CH: 6,
-			"Survival": 45
-		},
-		availRanks: 2,
-		res: {
-			MISC: "Rank 1: Certain Animals do not attack, Rank 2: They and tamed animals will come to your aid"
-		}
-	},
-	"Finesse": {
-		desc: "With the Finesse perk you have a higher chance to score a critical hit on an opponent in combat, equivalent to 5 extra points of Luck.",
-		req: {
-			charLvl: 10
-		},
-		availRanks: 1,
-		res: {
-			critChance: 0.05
-		}
-	},
-	"Here and Now": {
-		desc: "The Here and Now perk immediately grants an additional experience level, complete with all the advantages that brings.",
-		req: {
-			charLvl: 10
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Gain one additional experience level"
+			fastTravelAlways: 1,
+			MISC: "Being over-encumbered no longer prevents you from using fast travel."
 		}
 	},
 	"Math Wrath": {
@@ -531,7 +578,19 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			APcost: -0.10,
 			MISC: "Reduce all AP costs by 10 percent."
+		}
+	},
+	"Meltdown": {
+		desc: "Meltdown causes foes killed by your Energy Weapons to give off a corona of harmful energy. Note: this can cause a chain reaction.",
+		req: {
+			charLvl: 16,
+			"Energy Weapons": 90
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Foes killed by your Energy Weapons emit a corona of harmful energy."
 		}
 	},
 	"Miss Fortune": {
@@ -579,6 +638,18 @@ var perks = {
 			MISC: "+50 Damage Resistance and Strength is raised up to 10 if HP drops below 20%"
 		}
 	},
+	"Nerves of Steel": {
+		desc: "With the Nerves of Steel perk, you regenerate Action Points much more quickly than you normally would.",
+		req: {
+			charLvl: 26,
+			AG: 7
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Increases the regeneration rate of Action Points",
+			APRegenRate: 0.2
+		}
+	},
 	"Night Person": {
 		desc: "When the sun is down, a Night Person gains +2 to both Intelligence and Perception (up to a maximum of 10). This perk directly affects your \"internal clock\" and remains active both inside and outside.",
 		req: {
@@ -587,364 +658,6 @@ var perks = {
 		availRanks: 1,
 		res: {
 			MISC: "+2 Intelligence and +2 Perception (up to a maximum of 10) when the sun is down."
-		}
-	},
-	"Plasma Spaz": {
-		desc: "You're just so excited about plasma that you can't (magnetically) contain yourself! The AP costs for all plasma weapons (including Plasma Grenades) are reduced by 10%.",
-		req: {
-			charLvl: 10,
-			"Energy Weapons": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "AP costs for all plasma weapons are reduced by 10%."
-		}
-	},
-	"Fast Metabolism": {
-		desc: "With the Fast Metabolism perk, you gain a 20% Health bonus when using Stimpaks.",
-		req: {
-			charLvl: 12
-		},
-		availRanks: 1,
-		res: {
-			MISC: "20% Health bonus when using Stimpaks"
-		}
-	},
-	"Ghastly Scavenger": {
-		desc: "With Ghastly Scavenger, when you're in Sneak mode, you gain the option to eat a Super Mutant or Feral Ghoul corpse to regain Health. Every time you feed, you lose Karma, and if the act is witnessed, it is considered a crime against nature.",
-		req: {
-			charLvl: 12,
-			eval: "PERK,Cannibal:true"
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Regain Health by feeding on Super Mutant or Feral Ghoul corpses"
-		}
-	},
-	"Hit the Deck": {
-		desc: "Your extensive familiarity with Explosives allows you to ignore a portion of their damage. Your Damage Threshold is increased by 50% against any and all Explosives--even your own.",
-		req: {
-			charLvl: 12,
-			"Explosives": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+50% DT when using explosives."
-		}
-	},
-	"Life Giver": {
-		desc: "With the Life Giver perk, you gain an additional 30 Hit Points.",
-		req: {
-			charLvl: 12,
-			EN: 6
-		},
-		availRanks: 1,
-		res: {
-			HP: 30
-		}
-	},
-	"Long Haul": {
-		desc: "You have learned how to pack mountains of gear for the Long Haul. Being over-encumbered no longer prevents you from using Fast Travel.",
-		req: {
-			charLvl: 12,
-			EN: 6,
-			"Barter": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Being over-encumbered no longer prevents you from using fast travel."
-		}
-	},
-	"Piercing Strike": {
-		desc: "Piercing Strike makes all of your Unarmed and Melee Weapons (including thrown) negate 15 points of Damage Threshold on the target.",
-		req: {
-			charLvl: 12,
-			eval: ">=,Unarmed:70"
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Ignore 15 points of target's DT"
-		}
-	},
-	"Pyromaniac": {
-		desc: "With the Pyromaniac perk, you do +50% damage with fire-based weapons, like the Flamer and Shishkebab.",
-		req: {
-			charLvl: 12,
-			"Explosives": 60
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+50% damage with fire-based weapons"
-		}
-	},
-	"Robotics Expert": {
-		desc: "With the Robotics perk, you do an additional 25% damage to any robot. But, even better, sneaking up on a hostile robot undetected and activating it will put that robot into a permanent shutdown state.",
-		req: {
-			charLvl: 12,
-			"Science": 50
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+25% damage to robots and ability to shutdown robots if sneaking up on them"
-		}
-	},
-	"Silent Running": {
-		desc: "With the Silent Running perk, running no longer factors into a successful sneak attempt.",
-		req: {
-			charLvl: 12,
-			AG: 6,
-			"Sneak": 50
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Sneak and Run without penalties"
-		}
-	},
-	"Sniper": {
-		desc: "With the Sniper perk, your chance to hit an opponent's head in V.A.T.S. is significantly increased.",
-		req: {
-			charLvl: 12,
-			PE: 6,
-			AG: 6
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Increase chance to hit opponent's head in V.A.T.S. by 25%"
-		}
-	},
-	"Splash Damage": {
-		desc: "When you're deep in enemy territory, you just start chucking grenades and hope for the best. All Explosives have a 25% larger area of effect.",
-		req: {
-			charLvl: 12,
-			"Explosives": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Explosives have a 25% larger area of effect."
-		}
-	},
-	"Unstoppable Force": {
-		desc: "Your martial might is truly legendary. You do a large amount of additional damage through enemy blocks with all Melee Weapons and Unarmed attacks.",
-		req: {
-			charLvl: 12,
-			ST: 7,
-			"Melee Weapons": 90
-		},
-		availRanks: 1,
-		res: {
-			MISC: "You do additional damage through enemy blocks with melee and unarmed attacks"
-		}
-	},
-	"Adamantium Skeleton": {
-		desc: "With the Adamantium Skeleton perk, your limbs only receive 50% of the damage they normally would.",
-		req: {
-			charLvl: 14
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Limbs only receive 50% damage"
-		}
-	},
-	"Center of Mass": {
-		desc: "You don't fool around with fancy trick shots. Straight to the midsection and down they go. In V.A.T.S., you do an extra 15% damage with attacks targeting the torso.",
-		req: {
-			charLvl: 16,
-			"Guns": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "In V.A.T.S., you do an additional 15% damage when targeting the torso."
-		}
-	},
-	"Chemist": {
-		desc: "With the Chemist perk, any chems you take last twice as long.",
-		req: {
-			charLvl: 14,
-			"Medicine": 60
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Increased duration for chem effects"
-		}
-	},
-	"Jury Rigging": {
-		desc: "You possess the amazing ability to repair any item using a roughly similar item. Fix a Trail Carbine with a Hunting Rifle, a Plasma Defender with a Laser Pistol, or even Power Armor with Metal Armor. How does it work? Nobody knows... except you.",
-		req: {
-			charLvl: 14,
-			"Repair": 90
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Repair any item using a roughly similar item."
-		}
-	},
-	"Light Step": {
-		desc: "With the Light Step perk, you'll never set off an enemy's mines or floor-based traps.",
-		req: {
-			charLvl: 14,
-			AG: 6,
-			PE: 6
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Never set off enemy mines or floor-based traps"
-		}
-	},
-	"Purifier": {
-		desc: "As a purifier of the wasteland, you do +50% damage with Melee and Unarmed weapons against Centaurs, Nightstalkers, Spore Plants, Spore Carriers, Deathclaws, Super Mutants, and Feral Ghouls.",
-		req: {
-			charLvl: 14
-		},
-		availRanks: 1,
-		res: {
-			MISC: "	You do 50 plus percent damage with melee and unarmed weapons against centaurs, nightstalkers, spore plants, spore carriers, deathclaws, super mutants, and feral ghouls."
-		}
-	},
-	"Action Boy": {
-		desc: "With the Action Boy perk, you gain an additional 15 Action Points to use in V.A.T.S.",
-		req: {
-			charLvl: 16,
-			AG: 6,
-			gender: "male"
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+25 Action Points in V.A.T.S."
-		}
-	},
-	"Action Girl": {
-		desc: "With the Action Girl perk, you gain an additional 15 Action Points to use in V.A.T.S.",
-		req: {
-			charLvl: 16,
-			AG: 6,
-			gender: "female"
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+25 Action Points in V.A.T.S."
-		}
-	},
-	"Better Criticals": {
-		desc: "With the Better Criticals perk, you gain a 50% damage bonus every time a critical hit is scored on an opponent.",
-		req: {
-			charLvl: 16,
-			PE: 6,
-			LK: 6
-		},
-		availRanks: 1,
-		res: {
-			critDmg: 0.5
-		}
-	},
-	"Chem Resistant": {
-		desc: "Having the Chem Resistant perk means you're 50% less likely to develop an addiction to chems, like Psycho or Jet.",
-		req: {
-			charLvl: 16,
-			"Medicine": 60
-		},
-		availRanks: 1,
-		res: {
-			MISC: "50% less addiction chance"
-		}
-	},
-	"Meltdown": {
-		desc: "Meltdown causes foes killed by your Energy Weapons to give off a corona of harmful energy. Note: this can cause a chain reaction.",
-		req: {
-			charLvl: 12,
-			"Explosives": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Foes killed by your Energy Weapons emit a corona of harmful energy."
-		}
-	},
-	"Tag!": {
-		desc: "The Tag! perk allows you to select a fourth Skill to be a Tag skill, which instantly raises it by 15 points.",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 1,
-		res: {
-			taggedSkillsCap: 1,
-			MISC: "Select a fourth skill to be a Tag Skill (instantly raises it by 15 points)"
-		}
-	},
-	"Weapon Handling": {
-		desc: "Weapon Strength Requirements are now 2 points lower than normal for you.",
-		req: {
-			charLvl: 16,
-			eval: "<,ST:10"
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Weapon Strength Requirements -2"
-		}
-	},
-	"Computer Whiz": {
-		desc: "Fail a hack attempt and get locked out of a computer? Not if you're a Computer Whiz! With this perk, you can attempt to re-hack any computer you were previously locked out of.",
-		req: {
-			charLvl: 18,
-			IN: 7,
-			"Science": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Another attempt to hack any computer you were previously locked out of"
-		}
-	},
-	"Concentrated Fire": {
-		desc: "With Concentrated Fire, your accuracy to hit any body part in V.A.T.S. increases slightly with each subsequent hit on that body part.",
-		req: {
-			charLvl: 18,
-			"Energy Weapons": 60,
-			"Guns": 60
-		},
-		availRanks: 1,
-		res: {
-			MISC: "	Chance to hit any body part in V.A.T.S. increases slightly with each subsequent hit on that body part."
-		}
-	},
-	"Infiltrator": {
-		desc: "With Infiltrator, if a lock is broken, and can't normally be picked again, you can attempt to pick it again one more time. This includes locks previously broken by a \"Force Lock\" attempt.",
-		req: {
-			charLvl: 18,
-			PE: 7,
-			"Lockpick": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Another attempt to pick any broken lock."
-		}
-	},
-	"Paralyzing Palm": {
-		desc: "With Paralyzing Palm, you will sometimes perform a S.P.E.C.I.A.L. V.A.T.S. palm strike for 30 seconds. Note that in order to perform the Paralyzing Palm, you must be completely unarmed.",
-		req: {
-			charLvl: 18,
-			"Unarmed": 70
-		},
-		availRanks: 1,
-		res: {
-			MISC: "30% chance to perform a special V.A.T.S. palm strike that paralyzes your opponent for 30 seconds when unarmed"
-		}
-	},
-	"Explorer": {
-		desc: "When you choose the Explorer perk, every location in the world is revealed on your map. So get out there and explore!",
-		req: {
-			charLvl: 20
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Every location in the world is revealed on your map"
-		}
-	},
-	"Grim Reaper's Sprint": {
-		desc: "If you kill a target in V.A.T.S., 20 Action Points are restored upon exiting V.A.T.S.",
-		req: {
-			charLvl: 20
-		},
-		availRanks: 1,
-		res: {
-			MISC: "If you kill a target in V.A.T.S., 20 AP are restored upon exiting V.A.T.S. mode."
 		}
 	},
 	"Ninja": {
@@ -956,29 +669,9 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			critDmgSneak: 0.25,
+			critDmgMelee: 0.15,
 			MISC: "+15% critical chance with Melee or Unarmed attacks. Sneak attack criticals do 25% more damage."
-		}
-	},
-	"Solar Powered": {
-		desc: "With the Solar Powered perk, you gain an additional 2 points to Strength when in direct sunlight, and slowly regenerate lost Health.",
-		req: {
-			charLvl: 20,
-			EN: 7
-		},
-		availRanks: 1,
-		res: {
-			MISC: "Outdoors: +2 Strength and Health regeneration"
-		}
-	},
-	"Laser Commander": {
-		desc: "From the humble Laser Pistol to the might Gatling Laser, you do 15% more damage and have +10% chance to critically hit with any laser weapon.",
-		req: {
-			charLvl: 22,
-			"Energy Weapons": 90
-		},
-		availRanks: 1,
-		res: {
-			MISC: "+15 percent damage and +10 percent chance to critically hit with any laser weapon"
 		}
 	},
 	"Nuka Chemist": {
@@ -992,38 +685,84 @@ var perks = {
 			MISC: "Unlock special Nuka-Cola recipes at the workbench."
 		}
 	},
-	"Spray and Pray": {
-		desc: "Your attacks do much less damage to companions, allowing you to liberally spray an area with reckless abandon.",
+	"Pack Rat": {
+		desc: "You have learned the value of careful packing. Items with a weight of 2 or less weigh half as much for you.",
 		req: {
-			charLvl: 22
+			charLvl: 8,
+			IN: 5,
+			"Barter": 70
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Significantly reduces the damage you do to your companions."
+			MISC: "Items with a weight of two or less weigh half as much for you."
 		}
 	},
-	"Slayer": {
-		desc: "The slayer walks the earth! The speed of all Melee Weapons and Unarmed attacks is increased by 30%.",
+	"Paralyzing Palm": {
+		desc: "With Paralyzing Palm, you will sometimes perform a S.P.E.C.I.A.L. V.A.T.S. palm strike for 30 seconds. Note that in order to perform the Paralyzing Palm, you must be completely unarmed.",
 		req: {
-			charLvl: 24,
-			AG: 7, //TODO AG or ST?
-			"Unarmed": 90
+			charLvl: 18,
+			"Unarmed": 70
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Increases the speed of all melee and unarmed attacks by 30%."
+			MISC: "30% chance to perform a special V.A.T.S. palm strike that paralyzes your opponent for 30 seconds when unarmed."
 		}
 	},
-	"Nerves of Steel": {
-		desc: "With the Nerves of Steel perk, you regenerate Action Points much more quickly than you normally would.",
+	"Piercing Strike": {
+		desc: "Piercing Strike makes all of your Unarmed and Melee Weapons (including thrown) negate 15 points of Damage Threshold on the target.",
 		req: {
-			charLvl: 26,
-			AG: 7
+			charLvl: 12,
+			eval: ">=,Unarmed:70" //this is OR in G.E.C.K.
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Increases the regeneration rate of Action Points",
-			APRegenRate: 0.2
+			MISC: "Ignore 15 points of target's DT"
+		}
+	},
+	"Plasma Spaz": {
+		desc: "You're just so excited about plasma that you can't (magnetically) contain yourself! The AP costs for all plasma weapons (including Plasma Grenades) are reduced by 10%.",
+		req: {
+			charLvl: 10,
+			"Energy Weapons": 70
+		},
+		availRanks: 1,
+		res: {
+			APcostPlasmaWeapons: -0.10,
+			MISC: "AP costs for all plasma weapons are reduced by 10%."
+		}
+	},
+	"Purifier": {
+		desc: "As a purifier of the wasteland, you do +50% damage with Melee and Unarmed weapons against Centaurs, Nightstalkers, Spore Plants, Spore Carriers, Deathclaws, Super Mutants, and Feral Ghouls.",
+		req: {
+			charLvl: 14
+		},
+		availRanks: 1,
+		res: {
+			MISC: "You do +50% damage damage with melee and unarmed weapons against centaurs, nightstalkers, spore plants, spore carriers, deathclaws, super mutants, and feral ghouls."
+		}
+	},
+	"Pyromaniac": {
+		desc: "With the Pyromaniac perk, you do +50% damage with fire-based weapons, like the Flamer and Shishkebab.",
+		req: {
+			charLvl: 12,
+			"Explosives": 60
+		},
+		availRanks: 1,
+		res: {
+			dmgFireWeapons: 0.50,
+			MISC: "+50% damage with fire-based weapons"
+		}
+	},
+	"Quick Draw": {
+		desc: "Quick Draw makes all of your weapon equipping and holstering 50% faster.",
+		req: {
+			charLvl: 8,
+			AG: 5
+		},
+		availRanks: 1,
+		res: {
+			equipSpeed: 0.50,
+			MISC: "Equipping and holstering becomes 50% faster."
 		}
 	},
 	"Rad Absorption": {
@@ -1038,19 +777,342 @@ var perks = {
 			/* 1 rad every 20 seconds */
 		}
 	},
-	/* from here down, these perks need definitions on reqs */
-	"Abominable": {
-		desc: "",
+	"Rad Child": {
+		desc: "You truly are a rad child. As you go through the increasingly devastating stages of radiation sickness, you will regenerate more and more health.",
+		req: {
+			charLvl: 4,
+			"Survival": 70
+		},
+		availRanks: 1,
+		res: {
+			MISC: "* Minor Radiation Poisoning - HP +2 every second\n* Advanced Radiation Poisoning - HP +4 every second\n* Critical radiation poisoning - HP +6 every second\n* Deadly radiation poisoning - HP +8 every second"
+		}
+	},
+	"Rad Resistance": {
+		desc: "Rad Resistance allows you to -- what else? -- resist radiation. This perk grants an additional 25% to Radiation Resistance.",
+		req: {
+			charLvl: 8,
+			EN: 5,
+			"Survival": 40
+		},
+		availRanks: 1,
+		res: {
+			radRes: 0.25
+		}
+	},
+	"Rapid Reload": {
+		desc: "Rapid Reload makes all of your weapon reloads 25% faster than normal.",
+		req: {
+			charLvl: 2,
+			AG: 5,
+			"Guns": 30
+		},
+		availRanks: 1,
+		res: {
+			reloadSpeed: 0.25
+		}
+	},
+	"Retention": {
+		desc: "With the Retention perk, the bonuses granted by skill magazines last three times as long.",
+		req: {
+			charLvl: 2,
+			IN: 5
+		},
+		availRanks: 1,
+		res: {
+			magDur: 60, //TODO verify. base + this value
+			MISC: "Skill magazines last three times as long."
+		}
+	},
+	"Robotics Expert": {
+		desc: "With the Robotics perk, you do an additional 25% damage to any robot. But, even better, sneaking up on a hostile robot undetected and activating it will put that robot into a permanent shutdown state.",
+		req: {
+			charLvl: 12,
+			"Science": 50
+		},
+		availRanks: 1,
+		res: {
+			robotDmg: 0.25,
+			MISC: "+25% damage to robots and ability to shutdown robots if sneaking up on them"
+		}
+	},
+	"Run 'n Gun": {
+		desc: "The Run 'n Gun perk reduces accuracy penalties with one-handed Guns and Energy Weapons while walking or running.",
+		req: {
+			charLvl: 4,
+			eval: "OR,Guns:45,Energy Weapons:45"
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Better accuracy with one-handed ranged weapons.",
+			accuracyMoving: 1
+		}
+	},
+	"Scrounger": {
+		desc: "With the Scrounger perk, you'll find considerably more ammunition in containers than you normally would.",
+		req: {
+			charLvl: 8,
+			LK: 5
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Find more ammo in containers"
+		}
+	},
+	"Shotgun Surgeon": {
+		desc: "Your precision with a scattergun is something to behold. When using shotguns, regardless of ammunition used, you ignore an additional 10 points of a target's Damage Threshold.",
+		req: {
+			charLvl: 6,
+			"Guns": 45
+		},
+		availRanks: 1,
+		res: {
+			MISC: "When using shotguns, regardless of ammunition used, you ignore an additional 10 points of a target's damage threshold."
+		}
+	},
+	"Silent Running": {
+		desc: "With the Silent Running perk, running no longer factors into a successful sneak attempt.",
+		req: {
+			charLvl: 12,
+			AG: 6,
+			"Sneak": 50
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Sneak and Run without penalties"
+		}
+	},
+	"Slayer": {
+		desc: "The slayer walks the earth! The speed of all Melee Weapons and Unarmed attacks is increased by 30%.",
+		req: {
+			charLvl: 24,
+			AG: 7,
+			"Unarmed": 90
+		},
+		availRanks: 1,
+		res: {
+			fireRateMelee: 0.30,
+			fireRateUnarmed: 0.30,
+			MISC: "Increases the speed of all melee and unarmed attacks by 30%."
+		}
+	},
+	"Solar Powered": {
+		desc: "With the Solar Powered perk, you gain an additional 2 points to Strength when in direct sunlight, and slowly regenerate lost Health.",
+		req: {
+			charLvl: 20,
+			EN: 7
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Outdoors: +2 Strength and Health regeneration"
+		}
+	},
+	"Splash Damage": {
+		desc: "When you're deep in enemy territory, you just start chucking grenades and hope for the best. All Explosives have a 25% larger area of effect.",
+		req: {
+			charLvl: 12,
+			"Explosives": 70
+		},
+		availRanks: 1,
+		res: {
+			explosivesAreaOfEffect: 0.25,
+			MISC: "Explosives have a 25% larger area of effect."
+		}
+	},
+	"Sniper": {
+		desc: "With the Sniper perk, your chance to hit an opponent's head in V.A.T.S. is significantly increased.",
+		req: {
+			charLvl: 12,
+			PE: 6,
+			AG: 6
+		},
+		availRanks: 1,
+		res: {
+			accuracyVatsTargetHead: 0.25,
+			MISC: "Increase chance to hit opponent's head in V.A.T.S. by 25%"
+		}
+	},
+	"Spray and Pray": {
+		desc: "Your attacks do much less damage to companions, allowing you to liberally spray an area with reckless abandon.",
+		req: {
+			charLvl: 22
+		},
+		availRanks: 1,
+		res: {
+			dmgCompanions: -0.75,
+			MISC: "Significantly reduces the damage you do to your companions."
+		}
+	},
+	"Stonewall": {
+		desc: "You gain +5 Damage Threshold against all Melee Weapons and Unarmed attacks and cannot be knocked down in combat.",
+		req: {
+			charLvl: 8,
+			ST: 6,
+			EN: 6
+		},
+		availRanks: 1,
+		res: {
+			DTmelee: 5,
+			DTunarmed: 5,
+			canGetKnockedDown: -1,
+			MISC: "+5 to DT versus Unarmed attacks and Melee Weapons. You cannot be knocked down in combat."
+		}
+	},
+	"Strong Back": {
+		desc: "With the Strong Back perk, you can carry 50 more pounds of equipment.",
+		req: {
+			charLvl: 8,
+			ST: 5,
+			EN: 5
+		},
+		availRanks: 1,
+		res: {
+			carryWeight: 50
+		}
+	},
+	"Super Slam": {
+		desc: "All Melee Weapons (except thrown) and Unarmed attacks have a chance of knocking your target down.",
+		req: {
+			charLvl: 8,
+			ST: 6,
+			"Melee Weapons": 45
+		},
+		availRanks: 1,
+		res: {
+			enemyKnockdownChanceMelee: 0.30, //TODO these values may need to be flipped
+			enemyKnockdownChanceUnarmed: 0.15,
+			MISC: "Unarmed and melee weapon attacks have a chance of knocking down your opponent."
+		}
+	},
+	"Swift Learner": {
+		desc: "With each rank in the Swift Learner perk, you gain an additional 10% to total Experience Points whenever Experience Points are earned.",
+		req: {
+			charLvl: 2,
+			IN: 4
+		},
+		availRanks: 3,
+		res: {
+			expEarnRate: 0.1 //per level
+		}
+	},
+	"Tag!": {
+		desc: "The Tag! perk allows you to select a fourth Skill to be a Tag skill, which instantly raises it by 15 points.",
 		req: {
 			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
+			taggedSkillsCap: 1,
+			MISC: "Select a fourth skill to be a Tag Skill (instantly raises it by 15 points)"
+		}
+	},
+	"Terrifying Presence": {
+		desc: "In some conversations, you gain the ability to initiate combat while terrifying a mob of opponents, sending them fleeing for safety.",
+		req: {
+			charLvl: 8,
+			"Speech": 70
+		},
+		availRanks: 1,
+		res: {
+			MISC: "Enemies flee for 5 seconds after leaving dialogue."
+		}
+	},
+	"The Professional": {
+		desc: "Up close and personal, that's how you like it. Your Sneak Attack Criticals with pistols, revolvers, and submachine guns, whether Guns or Energy Weapons, all inflict an additional 20% damage.",
+		req: {
+			charLvl: 6,
+			"Sneak": 70
+		},
+		availRanks: 1,
+		res: {
+			critDmgSneakProfWeapons: 0.20,
+			MISC: "Your sneak attack criticals with pistols, revolvers, and submachine guns, whether guns or energy weapons, all inflict an additional 20 percent damage."
+		}
+	},
+	"Toughness": {
+		desc: "With the Toughness perk, you gain +3 to overall Damage Threshold. This perk may be taken twice, with the second rank granting an additional +3.",
+		req: {
+			charLvl: 6,
+			EN: 5
+		},
+		availRanks: 2,
+		res: {
+			DT: 3 //per level
+		}
+	},
+	"Travel Light": {
+		desc: "While wearing light armor or no armor, you run 10% faster.",
+		req: {
+			charLvl: 4,
+			"Survival": 45
+		},
+		availRanks: 1,
+		res: {
+			moveSpeed: 0.1
+		}
+	},
+	"Unstoppable Force": {
+		desc: "Your martial might is truly legendary. You do a large amount of additional damage through enemy blocks with all Melee Weapons and Unarmed attacks.",
+		req: {
+			charLvl: 12,
+			ST: 7,
+			"Melee Weapons": 90
+		},
+		availRanks: 1,
+		res: {
+			meleeDmg: 4,
+			unarmedDmg: 4,
+			MISC: "You do additional damage through enemy blocks with melee and unarmed attacks"
+		}
+	},
+	"Vigilant Recycler": {
+		desc: "Waste not, want not. When you use Energy Weapons, you are more likely to recover drained ammunition. You also have more efficient recycling recipes available at the Workbench.",
+		req: {
+			charLvl: 6,
+			"Science": 70
+		},
+		availRanks: 1,
+		res: {
+			ammoItemChance: 2,
+			MISC: "Recover drained ammo more often for energy weapons and all recipes for recycling recipes are unlocked."
+		}
+	},
+	"Weapon Handling": {
+		desc: "Weapon Strength Requirements are now 2 points lower than normal for you.",
+		req: {
+			charLvl: 16,
+			eval: "<,ST:10"
+		},
+		availRanks: 1,
+		res: {
+			weaponStrengthReq: -2,
+			MISC: "Weapon Strength Requirements -2"
+		}
+	},
+	/* from here down, these perks need definitions on reqs */
+	"Abominable": {
+		desc: "There's nothing abominable about your damage bonus against Abominations.",
+		req: {
+			charLvl: 0
+		},
+		availRanks: 3,
+		res: {
+			rank: {
+				1: {
+					dmgAbominable : 0.03
+				},
+				2: {
+					dmgAbominable : 0.03
+				},
+				3: {
+					dmgAbominable : 0.04
+				}
+			},
 			MISC: ""
 		}
 	},
 	"Agility Implant": {
-		desc: "",
+		desc: "Reflex Booster",
 		req: {
 			charLvl: 0
 		},
@@ -1060,12 +1122,23 @@ var perks = {
 		}
 	},
 	"Animal Control": {
-		desc: "",
+		desc: "You handle animals really well when they are dead and gain a damage bonus against the living ones.",
 		req: {
 			charLvl: 0
 		},
-		availRanks: 1,
+		availRanks: 3,
 		res: {
+			rank: {
+				1: {
+					animalDmg : 0.03
+				},
+				2: {
+					animalDmg : 0.03
+				},
+				3: {
+					animalDmg : 0.04
+				}
+			},
 			MISC: ""
 		}
 	},

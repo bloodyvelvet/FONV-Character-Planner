@@ -10,12 +10,12 @@ creates and handles all character data.
 
 */
 var foChar = {
-	version: "0.8.1", //<1.0.0 until finalized
+	version: "0.8.2", //<1.0.0 until finalized
 	built: false,
 	loading: setInterval("foChar.initChar()", 500),
 	ks: 0,
 	/* charInfo consists of all stats NOT trait/perk/special/skill */
-	charInfo: {
+	baseCharInfo: {
 		name: 'The Courier',
 		age: 18,
 		lvl: 1,
@@ -23,11 +23,12 @@ var foChar = {
 		xp: 0,
 		gender: 'male',
 		hardcore: false,
-			limbDecay: 0,
+			limbDecay: 1, //TODO same as limb damage?
 		specialDistPoints: 0, //base 33 + 1 point in each special
 		RAD: 0,
 			radRes: 0, //base - EN * 0.02, max 85%
 			poisonRes: 0, //base - (EN-1) * 5, max?
+			radFromConsumables: 1,
 		H20: 0,
 		SLP: 0,
 		FOD: 0,
@@ -35,27 +36,55 @@ var foChar = {
 			HPRegenRate: 0, //0 minus perks, 1 per 10sec with implant
 		AP: 65, //base - base AP determined by 65 + Agility x3
 			APRegenRate: 0.060, //without perk/traits
+			APvats: 0, //base = AP
+			APkillReward: 0,
+			APcost: 1,
+			APcostPlasmaWeapons: 1,
 		SP: 0, //base? 12+(INT/2) - if .5, every other level rounds up
 			SPgainRate: 3, //per level
 			SPgainRateFromBooks: 3, //per book
 		skillPointsFromMags: 10, //temp from mags
-		magAffectLength: 30, //TODO what's the actual length? fix in perks "Retention"
+		magDur: 30, //TODO what's the actual length? fix in perks "Retention"
 		DT: 0, //base - 0
+			DTexplosives: 1,
+			DTmelee: 1,
+			DTunarmed: 1,
+			canGetKnockedDown: 1,
+				enemyKnockdownChanceMelee: 0,
+				enemyKnockdownChanceUnarmed: 0,
 		critChance: 0, //base - LUCK * 0.01
-			critDmg: 0, //TODO base
-			critDmgMelee: 0, //TODO base
-		dmg: 0, //TODO base?
-			dmgOppSex: 0, //TODO base?
-			dmgSameSex: 0, //TODO base?
-			dmgExplosives: 0, //TODO base?
+			critChanceLaserWeapons: 1,
+			critDmg: 1, //TODO base
+			critDmgSneak: 1, //TODO base
+				critDmgSneakProfWeapons: 1, //TODO base
+			critDmgMelee: 1, //TODO base
+		dmg: 1, //TODO base?
+			dmgCompanions: 1,
+			dmgHumanoids: 1,
+			dmgOppSex: 1, //TODO base?
+			dmgSameSex: 1, //TODO base?
+			dmgExplosives: 1, //TODO base?
+			dmgCowboyWeapons: 1,
+			dmgLaserWeapons: 1,
+			dmgFireWeapons: 1,
+			dmgAbominable: 1,
 			meleeDmg: 0, //base - ST*0.05
+			unarmedDmg: 0, //TODO base?
 			animalDmg: 0, //TODO base?
 			animalDmgCrit: 0, //TODO base 0%?
-			insectDmg: 0, //TODO base?
-		fireRate: 0, //TODO base?
+				animalAgro: 10, //TODO better way? 10 = attack, 20 = friendly, 30 = helpful
+			insectDmg: 1, //TODO base?
+			robotDmg: 1,
+		fireRate: 1,
+			fireRateMelee: 1,
+			fireRateUnarmed: 1,
 		accuracy: 0, //TODO base?
-			accuracyMoving: 0, //TODO base?
+			accuracyMoving: 1, //1 = normal accuracy, higher is better
+			accuracyVats: 0,
+			accuracyVatsPistol: 0,
+			accuracyVatsTargetHead: 1,
 		reloadSpeed: 1, //TODO base?
+		equipSpeed: 1,
 		throwRate: 0, //base - 0.4 + (AG*0.01)
 			throwSpeed: 0, //base - fireRate
 			throwRange: 0, //base - Range is calculated as 3 * ST
@@ -64,9 +93,30 @@ var foChar = {
 		expEarnRate: 1, //TODO base?
 		karma: 0, //base - range bad,neutral,good [-2500 - -250][-249 - 249][250 - 2500], title per level
 			karmaTitle: '',
-		moveSpeed: 0,  //TODO base?
-		weapDecay: 0  //TODO base?
+		moveSpeed: 1,  //TODO base?
+		weapDecay: 0,  //TODO base?
+		weaponStrengthReq: 0, //base + this value
+		chemDur: 1,
+			chemAddictionChance: 1,
+		ignoreLockTerminal: 0, //how many times can you ignore that a terminal is locked
+		ignoreBrokenLock: 0, //how many times can you ignore that a lock is broken
+		ammoItemChance: 1, //chance you'll get an ammo item
+		mineExplodeChance: 1, //chance floor based trap is set off
+		seeEnemyHealth: 0, //can you see enemy health?
+		fastTravelAlways: 0, //can you fast travel regardless of carry weight?
+		explosivesAreaOfEffect: 1,
+		/* add ability to clone base for char reset */
+		clone: function() {
+			var newObj = {};
+			for (i in this) {
+				if (i == 'clone') continue;
+				if (this[i] && typeof this[i] == "object") {
+					newObj[i] = this[i].clone();
+				} else newObj[i] = this[i]
+			} return newObj;
+		}
 	},
+	charInfo: {},
 	traits: {},
 		traitsCap: 2, //allow for glitch
 	perks: {}, //TODO add check for max perks
@@ -85,6 +135,7 @@ var foChar = {
 			if (fonv_lib.DEBUG) { console.log(fonv_lib.libs[i], typeof window[fonv_lib.libs[i].split("-")[1]], prev); }
 		}
 		if (prev) {
+			foChar.charInfo = foChar.baseCharInfo.clone();
 			foChar.built = true;
 			foChar.initSkills();
 			foChar.initSpecials();
@@ -520,6 +571,12 @@ var foChar = {
 		foChar.charInfo.HP = foChar.calculations.calculateAvailHP();
 		//recalc AP
 		foChar.charInfo.AP = foChar.calculations.calculateAvailAP();
+		//recalc AP in V.A.T.S.
+		foChar.charInfo.APvats = foChar.calculations.calculateAvailAPvats();
+		//recalc accuracy in V.A.T.S.
+		foChar.charInfo.accuracyVats = foChar.calculations.calculateAccuracyVats();
+		//recalc accuracy in V.A.T.S. using pistols
+		foChar.charInfo.accuracyVatsPistols = foChar.calculations.calculateAccuracyVatsPistols();
 		//recalc calculateCritChance
 		foChar.charInfo.critChance = foChar.calculations.calculateCritChance();
 		//recalc radRes
@@ -564,6 +621,20 @@ var foChar = {
 			//now find dif for availSP vs alloc to get leftover SP
 			return availSP-alloc;
 		},
+		calculateAvailAPvats: function() {
+			var APvats = 0;
+			if (foChar.charInfo["APvats"] == 0) {
+				return foChar.charInfo["AP"];
+			}else{
+				return foChar.charInfo["APvats"];
+			}
+		},
+		calculateAccuracyVats: function() {
+			return foChar.charInfo["accuracy"]+foChar.charInfo["accuracyVats"];
+		},
+		calculateAccuracyVatsPistols: function() {
+			return foChar.charInfo["accuracy"]+foChar.charInfo["accuracyVatsPistols"];
+		},
 		calculateAvailHP: function() {
 			var availHP = 0;
 			try { //try/catch for special init
@@ -586,13 +657,18 @@ var foChar = {
 		},
 		calculateCritChance: function() {
 			var critChance = 0;
+			var critChanceLuck = 0;
 			try { //try/catch for special init
-				critChance = foChar.specials["LK"].lvl*0.01;
+				critChanceLuck = foChar.specials["LK"].lvl;
 			} catch (err) {
-				critChance = 1*0.01; //assume init at 1
+				critChanceLuck = 1; //assume init at 1
 			}
+			if (foChar.perks["Finesse"]) {
+				critChanceLuck = critChanceLuck+5;
+			}
+			critChance = critChanceLuck*0.01;
 
-			return critChance;
+			return critChance.toFixed(2);
 		},
 		calculateRadRes: function() {
 			var radRes = 0;
@@ -654,6 +730,25 @@ var foChar = {
 
 			return throwRate.toFixed(2);
 		},
+		calculateThrowRange: function() {
+			var throwRange = 0;
+			var throwRangeMultipier = 3;
+			if (foChar.perks["Heave, Ho!"]) {
+				throwRangeMultipier = foChar.specials["ST"].lvl+2;
+			}
+			try { //try/catch for special init
+				throwRange = foChar.specials["ST"].lvl*throwRangeMultipier;
+			} catch (err) {
+				throwRange = 1*throwRangeMultipier; //assume init at 1
+			}
+			//can't be less than 0
+			if (throwRange<0) { throwRange = 0; }
+
+			return throwRange;
+		},
+		calculateThrowRate: function() {
+			return foChar.charInfo["fireRate"];
+		},
 		calculateKarmaTitle: function() {
 			var karmaTitle = '', karmaLvl;
 			if (karma[foChar.charInfo.lvl]) {
@@ -706,8 +801,9 @@ var foChar = {
 				}
 			}
 		},
-		calculatePerksBonus: function(_title, action) {
+		calculatePerksBonus: function(_title, action, perkTitle) {
 			var action = action || "add";
+			var perkTitle = perkTitle || _title;
 			if (perks[_title]) {
 				if (action == "add") {
 					//add
@@ -720,6 +816,19 @@ var foChar = {
 							foChar.charInfo[res] = foChar.charInfo[res]+perks[_title].res[res];
 						}else if (foChar[res]) {
 							foChar[res] = foChar[res]+perks[_title].res[res];
+						}else if (res.toString() == "rank") {
+							for (var resRank in perks[perkTitle].res.rank) {
+								if (resRank > foChar.perks[_title].rank) {
+									break;
+								}
+								for (var resRankRes in perks[_title].res.rank[resRank]) {
+									//TODO add in other types besides charInfo
+									if (foChar.charInfo[resRankRes]) {
+										var perkRes = perks[_title].res.rank[resRank];
+										foChar.charInfo[resRankRes] = foChar.charInfo[resRankRes]+perkRes[resRankRes];
+									}
+								}
+							}
 						}else{
 							if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
 						}
@@ -798,25 +907,6 @@ var foChar = {
 			if (companionNerve<0) { companionNerve = 0; }
 
 			return companionNerve.toFixed(2);
-		},
-		calculateThrowRange: function() {
-			var throwRange = 0;
-			var throwRangeMultipier = 3;
-			if (foChar.perks["Heave, Ho!"]) {
-				throwRangeMultipier = foChar.specials["ST"].lvl+2;
-			}
-			try { //try/catch for special init
-				throwRange = foChar.specials["ST"].lvl*throwRangeMultipier;
-			} catch (err) {
-				throwRange = 1*throwRangeMultipier; //assume init at 1
-			}
-			//can't be less than 0
-			if (throwRange<0) { throwRange = 0; }
-
-			return throwRange;
-		},
-		calculateThrowRate: function() {
-			return foChar.charInfo["fireRate"];
 		}
 	},
 	getKarmaRange: function(karmaVal) {
@@ -859,70 +949,6 @@ var foChar = {
 	},
 	reset: function() {
 		delete foChar.charInfo; //clear out anything added/updated
-		foChar.charInfo = { //reset
-			name: 'The Courier',
-			age: 18,
-			lvl: 1,
-				lvlCap: 30, //for DLC
-			xp: 0,
-			gender: 'male',
-			hardcore: false,
-				limbDecay: 0,
-			specialDistPoints: 0, //base 33 + 1 point in each special
-			RAD: 0,
-				radRes: 0, //base - EN * 0.02, max 85%
-				poisonRes: 0, //base - (EN-1) * 5, max?
-			H20: 0,
-			SLP: 0,
-			FOD: 0,
-			HP: 0, //TODO base - using fo3 rules
-				HPRegenRate: 0, //base - 0 minus perks, 1 per 10sec with implant
-			AP: 65, //TODO base? - base AP determined by 65 + Agility x3
-				APRegenRate: 0.060, //without perk/traits
-			SP: 0, //TODO base? 12+(INT/2) - if .5, every other level rounds up - verify
-				SPgainRate: 3, //per level
-				SPgainRateFromBooks: 3, //per book
-			skillPointsFromMags: 10, //temp from mags
-			DT: 0, //TODO base?
-			critChance: 0, //TODO base - LUCK * 0.01
-				critDmg: 0, //TODO base
-			dmg: 0, //TODO base?
-				dmgOppSex: 0, //TODO base?
-				dmgSameSex: 0, //TODO base?
-				dmgExplosives: 0, //TODO base?
-				meleeDmg: 0, //TODO base?
-				animalDmg: 0, //TODO base?
-				animalDmgCrit: 0, //TODO base 0%?
-				insectDmg: 0, //TODO base?
-			fireRate: 0, //TODO base?
-			accuracy: 0, //TODO base?
-				accuracyMoving: 0, //TODO base?
-			reloadSpeed: 1, //TODO base?
-			throwRate: 0, //base - 0.4 + (AG*0.01)
-				throwSpeed: 0, //base - fireRate
-				throwRange: 0, //TODO base? Range is calculated as 3 * ST
-			companionNerve: 0, //TODO base?
-			carryWeight: 0, //base - 150 + (ST*10)
-			expEarnRate: 1, //TODO base?
-			karma: 0, //base - range bad,neutral,good [-2500 - -250][-249 - 249][250 - 2500], title per level
-				karmaTitle: '',
-			moveSpeed: 0,  //TODO base?
-			weapDecay: 0  //TODO base?
-		}
-		//reset SPT and specials
-		delete foChar.skills;
-		foChar.skills = {};
-		delete foChar.perks;
-		foChar.perks = {};
-		delete foChar.traits;
-		foChar.traits = {};
-		delete foChar.specials;
-		foChar.specials = {};
-
-		//reset tagged skills
-		foChar.taggedSkills = [];
-		foChar.taggedSkillsCap= 3;
-
 		//reinit
 		foChar.initChar();
 

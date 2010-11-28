@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Traits Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.2.0
+version: 1.2.1
 
 This library creates a traits object available to the page containing all trait
 information for use with the foChar library.
@@ -37,7 +37,7 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
-			critChance: 0.03,
+			critChance: 0.03, //Not in G.E.C.K.?
 			weapDecay: 0.15
 		}
 	},
@@ -47,13 +47,17 @@ var traits = {
 		availRanks: 1,
 		res: {
 			fireRate: 0.20,
-			accuracy: -0.20
+			accuracy: -0.20,
+			gunSpread: 0.20,
+			accuracy: -0.20,
+			APcost: -0.20
 		}
 	},
 	"Four Eyes": {
 		desc: "While wearing any type of glasses, you have +1 PER. Without glasses you have -1 PER.",
 		req: {
-			eval: "<,PE:10"
+			eval: ">,PE:1", //according to G.E.C.K you must have both of these
+			eval: "<,PE:10" //reqs (plus wearing glasses) to gain the benefit
 		},
 		availRanks: 1,
 		res: {
@@ -87,12 +91,12 @@ var traits = {
 			MISC: "Your melee and unarmed attacks do more damage, but less critical hit damage."
 		}
 	},
-	"Kamikaze": { //TODO description
-		desc: "",
+	"Kamikaze": {
+		desc: "You have +10 Action Points but your reckless nature causes you to have -2 Damage Threshold.",
 		req: {},
 		availRanks: 1,
 		res: {
-			AP: 10,
+			AP: 10, //G.E.C.K. ref?
 			DT: -2
 		}
 	},
@@ -102,7 +106,8 @@ var traits = {
 		availRanks: 1,
 		res: {
 			throwSpeed: 0.30,
-			throwRange: -0.25
+			throwRange: -0.25,
+			throwAPcost: -0.30
 		}
 	},
 	"Small Frame": {
@@ -113,7 +118,7 @@ var traits = {
 		availRanks: 1,
 		res: {
 			AG: 1,
-			limbDecay: 0 //TODO decay percent?
+			limbDecay: 0.25
 		}
 	},
 	"Trigger Discipline": {
@@ -121,7 +126,9 @@ var traits = {
 		req: {},
 		availRanks: 1,
 		res: {
+			APcost: 0.20,
 			fireRate: -0.20,
+			gunSpread: -0.20,
 			accuracy: 0.20
 		}
 	},

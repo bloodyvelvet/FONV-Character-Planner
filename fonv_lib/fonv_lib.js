@@ -52,21 +52,24 @@ var fonv_lib = {
 	scriptPath: '',
 	DEBUG: false, //true here prints a lot to the console, firebug recommended
 	libs: [
-		'fonv_lib-perks',      //add perks     -
-		'fonv_lib-karma',      //add karma      |
-		'fonv_lib-skills',     //add skills     |
-		'fonv_lib-specials',   //add specials   |- load order doesn't matter
-		'fonv_lib-traits',     //add traits     |
-		'fonv_lib-xp',         //add experience |
-		'fonv_lib-foChar',     //build a char  -
+		'fonv_lib-perks',      //add perks      -
+		'fonv_lib-karma',      //add karma       |
+		'fonv_lib-skills',     //add skills      |
+		'fonv_lib-specials',   //add specials    |
+		'fonv_lib-traits',     //add traits      |- load order doesn't matter
+		'fonv_lib-xp',         //add experience  |
+		'fonv_lib-challenges', //add challenges  |
+		'fonv_lib-companions', //add companions  |
+		'fonv_lib-foChar',     //build a char   -
 		'fonv_lib-libHelpers'  //extend basic libs. must load after basic libs
 	],
 	load: function() {
 		fonv_lib.scriptPath = fonv_lib.getScriptPath(fonv_lib.scriptName);
 		for (var i = 0; i<fonv_lib.libs.length; i++) {
-			console.log('loading:',fonv_lib.libs[i]);
+			if (window.console) { console.log('loading:',fonv_lib.libs[i]); }
 			fonv_lib.require(fonv_lib.scriptPath+'/'+fonv_lib.libs[i]);
 		}
+		return true;
 	},
 	require: function(libraryName) { //borrowed from scriptaculous lib
 		// inserting via DOM fails in Safari 2.0, so brute force approach
@@ -91,4 +94,4 @@ var fonv_lib = {
 
 }
 
-fonv_lib.load(); //load in libs
+while(!fonv_lib.load()){}; //load in libs

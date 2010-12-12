@@ -17,7 +17,7 @@ input {
 	font-size: 11px;
 	border-width: 1px;
 }
-. tag_button {
+.tag_button {
 	width: 40px;
 }
 .fright {
@@ -40,6 +40,11 @@ input {
 	float: left;
 	width: 85%;
 }
+.title_narrow {
+	border: 1px solid #393;
+	float: left;
+	width: 75%;
+}
 .title_withVal {
 	border: 1px solid #393;
 	float: left;
@@ -56,61 +61,64 @@ input {
 	color: #666;
 }
 
-#specials_cont {
-	border: 1px solid #393;
-	width: 300px;
-}
-#specials_list {
-	height: 100%;
-	width: 100%;
-	overflow-y: auto;
-}
 
-#skills_cont {
-	border: 1px solid #393;
+#traits_cont, #perks_cont, #skills_cont, #specials_cont {
 	width: 300px;
-}
-#skills_list {
-	height: 100%;
-	width: 100%;
-	overflow-y: auto;
-}
-
-#traits_cont {
-	border: 1px solid #393;
-	width: 300px;
-}
-#traits_list {
-	height: 100%;
-	width: 100%;
-	overflow-y: auto;
 }
 
 #perks_cont {
-	border: 1px solid #393;
 	height: 900px;
-	width: 300px;
 }
 
-#perks_list {
+#perks_list, #traits_list, #skills_list, #specials_list {
 	height: 100%;
 	width: 100%;
 	overflow-y: auto;
 }
 
-#char_misc_cont {
-	border: 1px solid #393;
-	height: 900px;
-	width: 300px;
+#char_chance_cont, #char_crit_cont, #char_comp_cont, #char_eff_cont, #char_con_cont, #char_dmg_cont, #char_kills_cont, #char_misc_cont {
+	height: 300px;
+	width: 235px;
 	overflow-y: auto;
 }
-#char_misc_cont div {
+
+#char_dmg_cont, #char_kills_cont {
+	width: 175px;
+}
+
+#char_misc_cont {
+	height: 700px;
+}
+
+#char_dmg_cont, #char_kills_cont {
+	height: 350px;
+}
+
+#char_con_cont {
+	height: 100px;
+}
+
+#char_chance_cont, #char_crit_cont, #char_comp_cont {
+	height: 200px;
+}
+
+#char_eff_cont {
+	height: 850px;
+}
+
+#char_chance_cont div, #char_crit_cont div, #char_comp_cont div, #char_eff_cont div, #char_con_cont div, #char_dmg_cont div, #char_kills_cont div, #char_misc_cont div {
 	height: 20px;
+}
+
+#fonv_lib_logMsg {
+	height: 50px;
+	width: 100%;
+	overflow-y: auto;
 }
 
 #info_display {
 	border: 1px solid #393;
 	height: 400px;
-	width: 400px;
+	width: 300px;
 	overflow-y: auto;
 }

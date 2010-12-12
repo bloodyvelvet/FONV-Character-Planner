@@ -107,7 +107,7 @@
 				if (fonv_lib.DEBUG) { console.log("getPerkVal: returning "+foChar.perks[perk].rank+" for "+perk); }
 				return foChar.perks[perk].rank;
 			}
-			if (fonv_lib.DEBUG) { console.log("getPerkVal: returning 0 for "+perk); }
+			//if (fonv_lib.DEBUG) { console.log("getPerkVal: returning 0 for "+perk); }
 			return 0;
 		}
 		function getVal(fromId) {
@@ -157,6 +157,13 @@
 			}else if (traits[forId])	{
 				//console.log("	found trait:"+traits[forId].desc);
 				dispString += traits[forId].desc;
+			}else if (companions[forId]) {
+				dispString += companions[forId].desc+"<br />";
+				dispString += "group type: "+companions[forId].compGroup+", ";
+					if (companions[forId].compGroup == 1) {
+						dispString += "Non-";
+					}
+					dispString += "Humans<br />";
 			}
 			
 			$(inId).innerHTML = dispString;
@@ -261,13 +268,90 @@
 						charInfoString += ' <input type="button" value="toggle" class="fright" onclick="if (foChar.charInfo[\'hardcore\']) { foChar.charInfo[\'hardcore\'] = false; }else{ foChar.charInfo[\'hardcore\'] = true } updateGUI();" />';
 						break;
 					default:
+						//console.log(charInfo);
 				}
 				charInfoString += '</div>';
 			}
 			$('char_misc').innerHTML = charInfoString;
+			//generate char kills data
+			var charKillsString='', charKillsInfo;
+			charKillsString += '<div class="w100p">Character Kills Info</div>';
+			for (charKillsInfo in foChar.kills) {
+				if (typeof foChar.kills[charKillsInfo] == 'function') {
+					continue;
+				}
+				charKillsString += '<div id="'+flip(charKillsInfo)+'" class="w100p">'+charKillsInfo+': '+foChar.kills[charKillsInfo];
+				
+				charKillsString += '</div>';
+			}
+			$('char_kills').innerHTML = charKillsString;
+			//generate char dmg data
+			var charDmgString='', charDmgInfo;
+			charDmgString += '<div class="w100p">Character Damage Info</div>';
+			for (charDmgInfo in foChar.dmg) {
+				if (typeof foChar.dmg[charDmgInfo] == 'function') {
+					continue;
+				}
+				charDmgString += '<div id="'+flip(charDmgInfo)+'" class="w100p">'+charDmgInfo+': '+foChar.dmg[charDmgInfo];
+				
+				charDmgString += '</div>';
+			}
+			$('char_dmg').innerHTML = charDmgString;
+			//generate char consumes data
+			var charConString='', charConInfo;
+			charConString += '<div class="w100p">Character Consume Info</div>';
+			for (charConInfo in foChar.consume) {
+				if (typeof foChar.consume[charConInfo] == 'function') {
+					continue;
+				}
+				charConString += '<div id="'+flip(charConInfo)+'" class="w100p">'+charConInfo+': '+foChar.consume[charConInfo];
+				
+				charConString += '</div>';
+			}
+			$('char_con').innerHTML = charConString;
+			//generate char effect data
+			var charEffString='', charEffInfo;
+			charEffString += '<div class="w100p">Character Effect Info</div>';
+			for (charEffInfo in foChar.effect) {
+				if (typeof foChar.effect[charEffInfo] == 'function') {
+					continue;
+				}
+				charEffString += '<div id="'+flip(charEffInfo)+'" class="w100p">'+charEffInfo+': '+foChar.effect[charEffInfo];
+				
+				charEffString += '</div>';
+			}
+			$('char_eff').innerHTML = charEffString;
+			//generate char crit data
+			var charCritString='', charCritInfo;
+			charCritString += '<div class="w100p">Character Crit Info</div>';
+			for (charCritInfo in foChar.crit) {
+				if (typeof foChar.crit[charCritInfo] == 'function') {
+					continue;
+				}
+				charCritString += '<div id="'+flip(charCritInfo)+'" class="w100p">'+charCritInfo+': '+foChar.crit[charCritInfo];
+				
+				charCritString += '</div>';
+			}
+			$('char_crit').innerHTML = charCritString;
+			//generate char chance data
+			var charChanceString='', charKChanceInfo;
+			charChanceString += '<div class="w100p">Character Chance Info</div>';
+			for (charKChanceInfo in foChar.chance) {
+				if (typeof foChar.chance[charKChanceInfo] == 'function') {
+					continue;
+				}
+				charChanceString += '<div id="'+flip(charKChanceInfo)+'" class="w100p">'+charKChanceInfo+': '+foChar.chance[charKChanceInfo];
+				
+				charChanceString += '</div>';
+			}
+			$('char_chance').innerHTML = charChanceString;
+			//generate char perks data
 			var perkString='', perk;
 				var qualPerks = foChar._getQualifiedPerksArray();
 				for (perk in perks) {
+					if (typeof perks[perk] == 'function') {
+						continue;
+					}
 					perkString += '<div id="'+flip(perk)+'" class="title_withVal" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
 					if (qualPerks.inArray(perk)) {
 						perkString += '<div id="sub_'+flip(perk)+'" class="sub_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')-1); updateGUI();">-</div><div id="add_'+flip(perk)+'" class="add_button" onclick="foChar.addSPT(\''+perk+'\', getPerkVal(\''+perk+'\')+1); updateGUI();">+</div>';
@@ -283,6 +367,26 @@
 					 //perkString += '<div id="'+flip(perk)+'" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+perk+'</div>';
 				}
 				$('perks_list').innerHTML = perkString;
+			//generate char companion data
+			var charCompString='', charCompInfo;
+			charCompString += '<div class="w100p">Character Companion Info</div>';
+			for (charCompInfo in companions) {
+				if (typeof companions[charCompInfo] == 'function') {
+					continue;
+				}
+				charCompString += '<div id="'+flip(charCompInfo)+'" class="title_narrow" onmouseover="dispInfo(this.id);" onmouseout="restoreDispInfo();">'+charCompInfo+'</div>';
+					if (foChar.canAddCompanion(charCompInfo)) {
+						//can add this companion
+						charCompString += '<div class="sub_button disabled">x</div><div class="add_button" onclick="foChar.addCompanion(\''+charCompInfo+'\'); updateGUI();">+</div>';
+					}else if (foChar.hasCompanion(charCompInfo)) {
+						//can't already have them
+						charCompString += '<div class="sub_button" onclick="foChar.removeCompanion(\''+charCompInfo+'\'); updateGUI();">-</div><div class="add_button disabled">x</div>';
+					}else{
+						//can't and don't have them
+						charCompString += '<div class="sub_button disabled">x</div><div class="add_button disabled">x</div>';
+					}
+			}
+			$('char_comp').innerHTML = charCompString;
 		}
 
 	</script>
@@ -291,7 +395,7 @@
 </head>
 <body>
 
-<table>
+<table border="2">
 	<tr>
 		<td valign="top">
 			<div id="specials_cont">
@@ -310,13 +414,49 @@
 			</div>
 		</td>
 		<td valign="top">
-			<div id="info_display"><!--  --></div>
-			<input type="button" onclick="foChar.reset(); updateGUI();" value="reset foChar" />
-			<!--  -->
+			<div id="char_kills_cont">
+				<div id="char_kills"><!--  --></div>
+			</div>
+			<div id="char_dmg_cont">
+				<div id="char_dmg"><!--  --></div>
+			</div>
 		</td>
-		<td width="300" valign="top">
+		<td valign="top">
+			<div id="char_con_cont">
+				<div id="char_con"><!--  --></div>
+			</div>
+			<div id="char_chance_cont">
+				<div id="char_chance"><!--  --></div>
+			</div>
+			<div id="char_crit_cont">
+				<div id="char_crit"><!--  --></div>
+			</div>
+			<div id="char_comp_cont">
+				<div id="char_comp"><!--  --></div>
+			</div>
+		</td>
+		<td valign="top">
+			<div id="char_eff_cont">
+				<div id="char_eff"><!--  --></div>
+			</div>
+		</td>
+		<td width="300" valign="top" rowspan="2">
 			<div id="perks_cont">
 				<div id="perks_list"><!--  --></div>
+			</div>
+		</td>
+		<td valign="top" rowspan="2">
+			<div id="info_display"><!--  --></div>
+			<input type="button" onclick="foChar.reset(); updateGUI();" value="reset foChar" /><br />
+			<input type="button" onclick="(fonv_lib.DEBUG) ? fonv_lib.DEBUG=false : fonv_lib.DEBUG=true; this.value = 'toggle DEBUG ('+fonv_lib.DEBUG+')';" value="toggle DEBUG (false)" /><br />
+			<input type="button" onclick="(foChar.logger.logToConsole) ? foChar.logger.logToConsole=false : foChar.logger.logToConsole=true; this.value = 'toggle DEBUG to console ('+foChar.logger.logToConsole+')';" value="toggle DEBUG to console (false)" /><br />
+			<!--  -->
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" colspan="5">
+			<div id="fonv_lib_logMsg">
+				<!--  -->
 			</div>
 		</td>
 	</tr>

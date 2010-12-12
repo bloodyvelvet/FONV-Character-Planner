@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Skills Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.0.0
+version: 1.0.1
 
 This library creates a skill object available to the page containing all skill
 information for use with the foChar library.
@@ -53,7 +53,7 @@ var skills = {
 	},
 	"Speech": {
 		value: 0,
-		desc: "The Speech skill governs how much you cna influence someone through dialogue, and gain access to information they might otherwise not want to share."
+		desc: "The Speech skill governs how much you can influence someone through dialogue, and gain access to information they might otherwise not want to share."
 	},
 	"Survival": {
 		value: 0,

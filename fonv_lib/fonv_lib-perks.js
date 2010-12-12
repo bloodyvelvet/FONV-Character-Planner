@@ -4,7 +4,7 @@ Fallout: New Vegas Character Planner - Perks Library
 
 	written by: bloody velvet <bloodyvelvet@brokenparts.zapto.org>
 
-version: 1.2.1
+version: 1.2.2
 
 This library creates a perks object available to the page containing all perk
 information for use with the foChar library.
@@ -24,11 +24,12 @@ The format of the eval value is in the form of:
 
 So comma seperated values for each eval, followed by name:value pairs.
 
-eval by can be any ONE of: AND, OR, >, <, >=, <=, ==, PERK
+eval by can be any ONE of: AND, OR, >, <, >=, <=, ==, PERK, COMPANION
 
 If using "AND", char should have ALL requirements. If "OR", char can have ANY
 of the requirements. If using "PERK", REQVAL is either true or false,
-checking if char should or should not have the required perk.
+checking if char should or should not have the required perk. The same is logic
+is applied for COMPANION.
 
 For perks with multiple ranks, the result is handled slightly differently.
 
@@ -112,7 +113,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgOppSex: 0.1,
+			dmgToOppSex: 0.1,
 			MISC: "unique dialogue options when dealing with the opposite sex."
 		}
 	},
@@ -123,7 +124,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmg: 0.5
+			dmgTotal: 0.5
 		}
 	},
 	"Cannibal": {
@@ -167,7 +168,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			chemAddictionChance: -0.50,
+			chanceChemAddiction: -0.50,
 			MISC: "50% less addiction chance"
 		}
 	},
@@ -179,7 +180,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgSameSex: 0.1,
+			dmgToSameSex: 0.1,
 			MISC: "unique dialogue options when dealing with the same sex."
 		}
 	},
@@ -203,7 +204,7 @@ var perks = {
 		availRanks: 1,
 		res: {
 			SPgainRateFromBooks: 1,
-			skillPointsFromMags: 10 //This is not in G.E.C.K.?
+			SPFromMags: 10 //This is not in G.E.C.K.?
 		}
 	},
 	"Computer Whiz": {
@@ -239,7 +240,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgSameSex: 0.1,
+			dmgToSameSex: 0.1,
 			MISC: "unique dialogue options when dealing with the same sex."
 		}
 	},
@@ -252,7 +253,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgCowboyWeapons: 0.25,
+			dmgByCowboyWeapon: 0.25,
 			MISC: "25 percent more damage when using any revolver, lever-action firearm, dynamite, knife, or hatchet."
 		}
 	},
@@ -264,7 +265,7 @@ var perks = {
 		},
 		availRanks: 3,
 		res: {
-			dmgExplosives: 0.20 //per level
+			dmgByExplosive: 0.20 //per level
 		}
 	},
 	"Educated": {
@@ -287,7 +288,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			insectDmg: 0.5
+			dmgToInsect: 0.5
 		}
 	},
 	"Explorer": {
@@ -395,7 +396,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			ammoItemChance: 1,
+			chanceAmmoItem: 1,
 			MISC: "Recover ammo casings more often and all ammo recipes are unlocked."
 		}
 	},
@@ -405,7 +406,7 @@ var perks = {
 			/* G.E.C.K. has the reqs as AND & OR, which I believe makes it AND */
 			charLvl: 2,
 			ST: 5, //G.E.C.K. has this as OR
-			"Explosives": 30, //G.E.C.K. has this as AND
+			"Explosives": 30 //G.E.C.K. has this as AND
 		},
 		availRanks: 1,
 		res: {
@@ -443,7 +444,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			animalDmgCrit: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
+			critDmgAnimal: 0.75 /* This perk will not affect animals such as Deathclaws or Nightstalkers, which are classified as abominations. */
 		}
 	},
 	"Infiltrator": {
@@ -489,7 +490,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgSameSex: 0.1,
+			dmgToSameSex: 0.1,
 			MISC: "unique dialogue options when dealing with the opposite sex."
 		}
 	},
@@ -501,7 +502,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgLaserWeapons: 0.15,
+			dmgByLaserWeapon: 0.15,
 			critChanceLaserWeapons: 0.10,
 			MISC: "+15 percent damage and +10 percent chance to critically hit with any laser weapon"
 		}
@@ -540,7 +541,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			mineExplodeChance: -1,
+			chanceMineExplode: -1,
 			MISC: "Never set off enemy mines or floor-based traps"
 		}
 	},
@@ -552,7 +553,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgHumanoids: 0.05,
+			dmgToHumanoids: 0.05,
 			seeEnemyHealth: 1,
 			MISC: "Allows you to see the health and DT of any target. Also grants +5% damage against humans and non-feral ghouls."
 		}
@@ -646,8 +647,8 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			MISC: "Increases the regeneration rate of Action Points",
-			APRegenRate: 0.2
+			APRegenRate: 0.2,
+			MISC: "Increases the regeneration rate of Action Points"
 		}
 	},
 	"Night Person": {
@@ -749,7 +750,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgFireWeapons: 0.50,
+			dmgByFireWeapon: 0.50,
 			MISC: "+50% damage with fire-based weapons"
 		}
 	},
@@ -832,7 +833,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			robotDmg: 0.25,
+			dmgToRobot: 0.25,
 			MISC: "+25% damage to robots and ability to shutdown robots if sneaking up on them"
 		}
 	},
@@ -939,7 +940,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			dmgCompanions: -0.75,
+			dmgToCompanions: -0.75,
 			MISC: "Significantly reduces the damage you do to your companions."
 		}
 	},
@@ -954,7 +955,7 @@ var perks = {
 		res: {
 			DTmelee: 5,
 			DTunarmed: 5,
-			canGetKnockedDown: -1,
+			chanceGetKnockedDown: -1,
 			MISC: "+5 to DT versus Unarmed attacks and Melee Weapons. You cannot be knocked down in combat."
 		}
 	},
@@ -979,8 +980,8 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			enemyKnockdownChanceMelee: 0.30, //TODO these values may need to be flipped
-			enemyKnockdownChanceUnarmed: 0.15,
+			chanceEnemyKnockdowneMelee: 0.30, //TODO these values may need to be flipped
+			chanceEnemyKnockdownUnarmed: 0.15,
 			MISC: "Unarmed and melee weapon attacks have a chance of knocking down your opponent."
 		}
 	},
@@ -1060,8 +1061,8 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			meleeDmg: 4,
-			unarmedDmg: 4,
+			dmgByMelee: 4,
+			dmgByUnarmed: 4,
 			MISC: "You do additional damage through enemy blocks with melee and unarmed attacks"
 		}
 	},
@@ -1073,7 +1074,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			ammoItemChance: 2,
+			chanceAmmoItem: 2,
 			MISC: "Recover drained ammo more often for energy weapons and all recipes for recycling recipes are unlocked."
 		}
 	},
@@ -1090,27 +1091,6 @@ var perks = {
 		}
 	},
 	/* from here down, these perks need definitions on reqs */
-	"Abominable": {
-		desc: "There's nothing abominable about your damage bonus against Abominations.",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 3,
-		res: {
-			rank: {
-				1: {
-					dmgAbominable : 0.03
-				},
-				2: {
-					dmgAbominable : 0.03
-				},
-				3: {
-					dmgAbominable : 0.04
-				}
-			},
-			MISC: ""
-		}
-	},
 	"Agility Implant": {
 		desc: "Reflex Booster",
 		req: {
@@ -1118,47 +1098,19 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			AG: 1,
 			MISC: ""
 		}
 	},
-	"Animal Control": {
-		desc: "You handle animals really well when they are dead and gain a damage bonus against the living ones.",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 3,
-		res: {
-			rank: {
-				1: {
-					animalDmg : 0.03
-				},
-				2: {
-					animalDmg : 0.03
-				},
-				3: {
-					animalDmg : 0.04
-				}
-			},
-			MISC: ""
-		}
-	},
-	"Beautiful Beatdown": {
+	"Better Healing": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,Arcade Gannon:true"
 		},
 		availRanks: 1,
 		res: {
-			MISC: ""
-		}
-	},
-	"Bug Stomper": {
-		desc: "",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 1,
-		res: {
+			HPFromConsumables: 0.20,
 			MISC: ""
 		}
 	},
@@ -1169,6 +1121,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			CH: 1,
 			MISC: ""
 		}
 	},
@@ -1179,16 +1132,31 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			EN: 1,
 			MISC: ""
 		}
 	},
 	"Enhanced Sensors": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,ED-E:true"
 		},
 		availRanks: 1,
 		res: {
+			MISC: ""
+		}
+	},
+	"Full Maintenence": {
+		desc: "",
+		req: {
+			charLvl: 0,
+			eval: "COMPANION,Raul Tejada:true"
+		},
+		availRanks: 1,
+		res: {
+			armorDecay: -0.25,
+			weaponDecay: -0.25,
 			MISC: ""
 		}
 	},
@@ -1199,16 +1167,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			MISC: ""
-		}
-	},
-	"Lord Death": {
-		desc: "",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 1,
-		res: {
+			IN: 1,
 			MISC: ""
 		}
 	},
@@ -1219,16 +1178,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
-			MISC: ""
-		}
-	},
-	"Mutant Massacrer": {
-		desc: "",
-		req: {
-			charLvl: 0
-		},
-		availRanks: 1,
-		res: {
+			LK: 1,
 			MISC: ""
 		}
 	},
@@ -1249,33 +1199,49 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			PE: 1,
 			MISC: ""
 		}
 	},
 	"Ranger Takedown": {
-		desc: "",
+		desc: "When caught without their weapons, NCR's rangers rely on the Ranger Takedown to quickly incapacitate opponents. Perform a Power Attack while moving backwards to execute a Ranger Takedown.",
 		req: {
 			charLvl: 0
 		},
 		availRanks: 1,
 		res: {
-			MISC: ""
+			MISC: "Speech Challenge or Sidequest reward."
 		}
 	},
 	"Regular Maintenence": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,Raul Tejada:true"
 		},
 		availRanks: 1,
 		res: {
+			armorDecay: -0.50,
+			weaponDecay: -0.50,
 			MISC: ""
 		}
 	},
 	"Scribe Assistant": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,Veronica Santangelo:true"
+		},
+		availRanks: 1,
+		res: {
+			MISC: ""
+		}
+	},
+	"Search and Mark": {
+		desc: "",
+		req: {
+			charLvl: 0,
+			eval: "COMPANION,Rex:true"
 		},
 		availRanks: 1,
 		res: {
@@ -1285,7 +1251,8 @@ var perks = {
 	"Spotter": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,Craig Boone:true"
 		},
 		availRanks: 1,
 		res: {
@@ -1295,7 +1262,8 @@ var perks = {
 	"Stealth Girl": {
 		desc: "",
 		req: {
-			charLvl: 0
+			charLvl: 0,
+			eval: "COMPANION,Lily Bowen:true"
 		},
 		availRanks: 1,
 		res: {
@@ -1309,6 +1277,7 @@ var perks = {
 		},
 		availRanks: 1,
 		res: {
+			ST: 1,
 			MISC: ""
 		}
 	},
@@ -1316,6 +1285,18 @@ var perks = {
 		desc: "Sub-Dermal Armor info",
 		req: {
 			charLvl: 0
+		},
+		availRanks: 1,
+		res: {
+			DT: 4,
+			MISC: ""
+		}
+	},
+	"Whiskey Rose": {
+		desc: "",
+		req: {
+			charLvl: 0,
+			eval: "COMPANION,Rose of Sharon Cassidy:true"
 		},
 		availRanks: 1,
 		res: {

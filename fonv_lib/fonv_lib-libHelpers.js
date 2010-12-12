@@ -40,28 +40,28 @@ if (typeof traits == "object") { //make sure original is loaded
 	 *		an empty Array means trait has no requirements
 	 */
 	traits._getTraitReqArray = function(traitName) {
+		var traitReqArr = [];
 		if (traits[traitName]) {
-			var traitReqArr = [];
 			for (var traitReq in traits[traitName].req) {
 				traitReqArr[traitReqArr.length] = traitReq;
 				traitReqArr[traitReqArr.length] = traits[traitName].req[traitReq];
 			}
-			return traitReqArr;
 		}
+		return traitReqArr;
 	}
 	/*	return an array of trait results
 	 *		returns in duals like: NAME, VAL, NAME, VAL, etc
 	 *		an empty Array means trait is not in use
 	 */
 	traits._getTraitResArray = function(traitName) {
+		var traitResArr = [];
 		if (traits[traitName]) {
-			var traitResArr = [];
 			for (var traitRes in traits[traitName].req) {
 				traitResArr[traitResArr.length] = traitRes;
 				traitResArr[traitResArr.length] = traits[traitName].req[traitRes];
 			}
-			return traitResArr;
 		}
+		return traitResArr;
 	}
 }
 
@@ -99,29 +99,29 @@ if (typeof foChar == "object" && typeof perks == "object") { //make sure origina
 		}
 	}
 
-	/* return perk rank */
+	/* return perk rank, 0r -1 if undefined */
 	foChar._getPerkRank = function(perk) {
+		var perkRank = -1;
 		if (foChar.perks[perk]) {
-			var perk = foChar.perks[perk];
-			return perk.rank;
+			perkRank = foChar.perks[perk];
 		}
+		return perkRank.rank;
 	}
 }
 
 
 if (typeof xp == "object") { //make sure original is loaded
-	/*	return current level based on XP earned as xpVal
+	/*	return current level based on XP earned as xpVal, or -1 if undefined
 	 */
 	xp._getLevelByXP = function (xpVal) {
-		var lvl = 1;
+		var lvl = -1;
 		for (xpLevel in xp) {
 			console.log(xp[xpLevel], xpVal, lvl)
 			if (xpVal >= xp[xpLevel]) {
 				lvl = xpLevel.toString();
-			}else{
-				return lvl;
 			}
 		}
+		return lvl;
 	}
 }
 

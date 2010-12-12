@@ -10,7 +10,7 @@ creates and handles all character data.
 
 */
 var foChar = {
-	version: "0.8.2", //<1.0.0 until finalized
+	version: "0.8.5", //<1.0.0 until finalized
 	built: false,
 	loading: setInterval("foChar.initChar()", 500),
 	ks: 0,
@@ -23,88 +23,20 @@ var foChar = {
 		xp: 0,
 		gender: 'male',
 		hardcore: false,
-			limbDecay: 1, //TODO same as limb damage?
-		specialDistPoints: 0, //base 33 + 1 point in each special
 		RAD: 0,
-			radRes: 0, //base - EN * 0.02, max 85%
-			poisonRes: 0, //base - (EN-1) * 5, max?
-			radFromConsumables: 1,
 		H20: 0,
 		SLP: 0,
 		FOD: 0,
 		HP: 0, //base - 100+(EN*20)
-			HPRegenRate: 0, //0 minus perks, 1 per 10sec with implant
 		AP: 65, //base - base AP determined by 65 + Agility x3
-			APRegenRate: 0.060, //without perk/traits
-			APvats: 0, //base = AP
-			APkillReward: 0,
-			APcost: 1,
-			APcostPlasmaWeapons: 1,
 		SP: 0, //base? 12+(INT/2) - if .5, every other level rounds up
-			SPgainRate: 3, //per level
-			SPgainRateFromBooks: 3, //per book
-		skillPointsFromMags: 10, //temp from mags
-		magDur: 30, //TODO what's the actual length? fix in perks "Retention"
 		DT: 0, //base - 0
-			DTexplosives: 1,
-			DTmelee: 1,
-			DTunarmed: 1,
-			canGetKnockedDown: 1,
-				enemyKnockdownChanceMelee: 0,
-				enemyKnockdownChanceUnarmed: 0,
-		critChance: 0, //base - LUCK * 0.01
-			critChanceLaserWeapons: 1,
-			critDmg: 1, //TODO base
-			critDmgSneak: 1, //TODO base
-				critDmgSneakProfWeapons: 1, //TODO base
-			critDmgMelee: 1, //TODO base
-		dmg: 1, //TODO base?
-			dmgCompanions: 1,
-			dmgHumanoids: 1,
-			dmgOppSex: 1, //TODO base?
-			dmgSameSex: 1, //TODO base?
-			dmgExplosives: 1, //TODO base?
-			dmgCowboyWeapons: 1,
-			dmgLaserWeapons: 1,
-			dmgFireWeapons: 1,
-			dmgAbominable: 1,
-			meleeDmg: 0, //base - ST*0.05
-			unarmedDmg: 0, //TODO base?
-			animalDmg: 0, //TODO base?
-			animalDmgCrit: 0, //TODO base 0%?
-				animalAgro: 10, //TODO better way? 10 = attack, 20 = friendly, 30 = helpful
-			insectDmg: 1, //TODO base?
-			robotDmg: 1,
-		fireRate: 1,
-			fireRateMelee: 1,
-			fireRateUnarmed: 1,
-		accuracy: 0, //TODO base?
-			accuracyMoving: 1, //1 = normal accuracy, higher is better
-			accuracyVats: 0,
-			accuracyVatsPistol: 0,
-			accuracyVatsTargetHead: 1,
-		reloadSpeed: 1, //TODO base?
-		equipSpeed: 1,
-		throwRate: 0, //base - 0.4 + (AG*0.01)
-			throwSpeed: 0, //base - fireRate
-			throwRange: 0, //base - Range is calculated as 3 * ST
-		companionNerve: 0, //TODO base?
-		carryWeight: 0, //base - 150 + (ST*10)
-		expEarnRate: 1, //TODO base?
+		
+		specialDistPoints: 0, //base 33 + 1 point in each special
+		
 		karma: 0, //base - range bad,neutral,good [-2500 - -250][-249 - 249][250 - 2500], title per level
 			karmaTitle: '',
-		moveSpeed: 1,  //TODO base?
-		weapDecay: 0,  //TODO base?
-		weaponStrengthReq: 0, //base + this value
-		chemDur: 1,
-			chemAddictionChance: 1,
-		ignoreLockTerminal: 0, //how many times can you ignore that a terminal is locked
-		ignoreBrokenLock: 0, //how many times can you ignore that a lock is broken
-		ammoItemChance: 1, //chance you'll get an ammo item
-		mineExplodeChance: 1, //chance floor based trap is set off
-		seeEnemyHealth: 0, //can you see enemy health?
-		fastTravelAlways: 0, //can you fast travel regardless of carry weight?
-		explosivesAreaOfEffect: 1,
+			
 		/* add ability to clone base for char reset */
 		clone: function() {
 			var newObj = {};
@@ -117,6 +49,163 @@ var foChar = {
 		}
 	},
 	charInfo: {},
+	/* object to hold crit info */
+	crit: {
+		critChance: 0, //base - LUCK * 0.01
+		critChanceLaserWeapons: 1,
+		critDmg: 1, //TODO base
+		critDmgSneak: 1, //TODO base
+		critDmgSneakProfWeapons: 1, //TODO base
+		critDmgMelee: 1, //TODO base
+		critDmgAnimal: 0 //TODO base 0%?
+	},
+	/* object to hold chance info */
+	chance: {
+		chanceAmmoItem: 1, //chance you'll get an ammo item
+		chanceChemAddiction: 1,
+		chanceEnemyKnockdowneMelee: 0,
+		chanceEnemyKnockdownUnarmed: 0,
+		chanceGetKnockedDown: 1, //0 = cannot get knocked down
+		chanceMineExplode: 1 //chance floor based trap is set off
+	},
+	/* object to hold consumed items */
+	consume: {
+		consumeRadAway: 0,
+		consumeTurbo: 0
+	},
+	/* object to hold damage info */
+	dmg: {
+		dmgTotal: 1, //TODO base?
+
+		dmgByCowboyWeapon: 1,
+		dmgByExplosive: 1, //TODO base?
+		dmgByFireWeapon: 1,
+		dmgByLaserWeapon: 1,
+		dmgByMelee: 0, //base - ST*0.05
+		dmgByUnarmed: 0,
+
+		dmgToCompanions: 1,
+		dmgToOppSex: 1, //TODO base?
+		dmgToSameSex: 1, //TODO base?
+
+		dmgToAbomination: 1,
+		dmgToAnimal: 1,
+		dmgToHumanoids: 1,
+		dmgToInsect: 1,
+		dmgToRobot: 1,
+		dmgToSuperMutant: 1
+	},
+	/* object to hold effects */
+	effect: {
+		accuracy: 0, //TODO base?
+		accuracyMoving: 1, //1 = normal accuracy, higher is better
+		accuracyVats: 0,
+		accuracyVatsPistol: 0,
+		accuracyVatsTargetHead: 1,
+
+		animalAgro: 10, //TODO better way? 10 = attack, 20 = friendly, 30 = helpful
+
+		APRegenRate: 0.060, //without perk/traits
+		APvats: 0, //base = AP
+		APkillReward: 0,
+		APcost: 1,
+		APcostPlasmaWeapons: 1,
+		
+		armorDecay: 1,
+
+		carryWeight: 0, //base - 150 + (ST*10)
+		chemDur: 1,
+		companionNerve: 0, //TODO base?
+
+		DTexplosives: 1,
+		DTmelee: 1,
+		DTunarmed: 1,
+
+		equipSpeed: 1,
+		explosivesAreaOfEffect: 1,
+		expEarnRate: 1, //TODO base?
+		fastTravelAlways: 0, //can you fast travel regardless of carry weight?
+
+		fireRate: 1,
+		fireRateMelee: 1,
+		fireRateUnarmed: 1,
+
+		HPRegenRate: 0, //0 minus perks, 1 per 10sec with implant
+		HPFromConsumables: 1,
+
+		ignoreLockTerminal: 0, //how many times can you ignore that a terminal is locked
+		ignoreBrokenLock: 0, //how many times can you ignore that a lock is broken
+
+		limbDecay: 1, //TODO same as limb damage?
+		magDur: 30, //TODO what's the actual length? fix in perks "Retention"
+		moveSpeed: 1,  //TODO base?
+		poisonRes: 0, //base - (EN-1) * 5, max?
+		radFromConsumables: 1,
+		radRes: 0, //base - EN * 0.02, max 85%
+		reloadSpeed: 1, //TODO base?
+		seeEnemyHealth: 0, //can you see enemy health?
+
+		SPFromMags: 10, //temp from mags
+		SPgainRate: 3, //per level
+		SPgainRateFromBooks: 3, //per book
+
+		throwRate: 0, //base - 0.4 + (AG*0.01)
+		throwSpeed: 0, //base - fireRate
+		throwRange: 0, //base - Range is calculated as 3 * S
+
+		turboDur: 0,
+		weapDecay: 0,  //TODO base?
+		weapStrengthReq: 0 //base + this value
+	},
+	/* object to hold kill info */
+	kills: {
+		killsTotal: 0,
+		killsShared: 0, //shared kill types, like using a gun to kill a robot = 1 kill total
+
+		killsByGun: 0,
+		killsByLaser: 0,
+		killsByMelee: 0,
+		killsByUnarmed: 0,
+
+		killsToAbomination: 0,
+		killsToAnimal: 0, //TODO Mutated Animal needed?
+		killsToHumanoids: 0, //TODO includes Feral Ghoul, is it needed as well?
+		killsToInsect: 0, //TODO Mutated Insect needed?
+		killsToRobot: 0,
+		killsToSuperMutant: 0,
+		//get total kills (all types - shared)
+		getKillsTotal: function() {
+			var kills = foChar.kills;
+			kills["killsTotal"] = 0;
+			for (var k in kills) {
+				if (typeof k != "object" && k != "killsShared") {
+					kills["killsTotal"] = kills["killsTotal"] + kills[k];
+				}
+			}
+			return kills["killsTotal"] - kills["killsShared"];
+		},
+		//reset kills
+		resetKills: function() {
+			var kills = foChar.kills;
+			for (var k in kills) {
+				if (typeof k != "object") {
+					kills[k] = 0;
+				}
+			}
+			return true;
+		},
+		// killed with, killed what, how many (optional, default 1)
+		addSharedKill: function(kWith, kWhat, howMany){
+			var howManyKills = howMany || 1;
+			var kills = foChar.kills;
+			for (var i=0; i < howManyKills; i++) {
+				kills[kWith]++;
+				kills[kWhat]++;
+				kills["killsShared"]++;
+			}
+			return true;
+		}
+	},
 	traits: {},
 		traitsCap: 2, //allow for glitch
 	perks: {}, //TODO add check for max perks
@@ -125,37 +214,45 @@ var foChar = {
 	skills: {},
 	taggedSkills: [],
 		taggedSkillsCap: 3, //4 if Tag! perk is taken
+	companions: [],
+		compGroupLimits: { //allow limit over-rides
+			0: 1, //humanoids
+			1: 1,  //animals
+			getCompanionsMax: function() {
+				var max = 0;
+				for (var l in foChar.compGroupLimits) {
+					if (typeof foChar.compGroupLimits[l] != "function") {
+						max = max + foChar.compGroupLimits[l];
+					}
+				}
+				return max;
+			}
+		},
 	initChar: function() {
-		if (fonv_lib.DEBUG) { console.log("checking init"); }
+		foChar.logger.log("checking init");
 		foChar.ks++;
 		var prev = true;
-		if (fonv_lib.DEBUG) { console.log("fonv_lib.libs.length", fonv_lib.libs.length); }
+		foChar.logger.log("fonv_lib.libs.length", fonv_lib.libs.length);
 		for (var i = 0; i<fonv_lib.libs.length; i++) {
 			prev = prev && (typeof window[fonv_lib.libs[i].split("-")[1]] == "object");
-			if (fonv_lib.DEBUG) { console.log(fonv_lib.libs[i], typeof window[fonv_lib.libs[i].split("-")[1]], prev); }
+			foChar.logger.log(fonv_lib.libs[i], typeof window[fonv_lib.libs[i].split("-")[1]], prev);
 		}
 		if (prev) {
 			foChar.charInfo = foChar.baseCharInfo.clone();
-			foChar.built = true;
-			foChar.initSkills();
-			foChar.initSpecials();
-			foChar.reCalculateCharInfo();
+			foChar.setItem("built=true");
+			while(!foChar.initSkills()){};
+			while(!foChar.initSpecials()){};
+			while(!foChar.reCalculateCharInfo()){};
 			clearInterval(foChar.loading);
-			if (fonv_lib.DEBUG) { console.log("foChar.built",foChar.built); }
+			foChar.logger.log("foChar.built",foChar.built);
 			return true;
 		}
 		if (foChar.ks >= 60) {
-			if (fonv_lib.DEBUG) { console.log("Load time exceeded ("+foChar.ks+"secs), killing load"); }
+			foChar.logger.log("Load time exceeded ("+foChar.ks+"secs), killing load");
 			clearInterval(foChar.loading);
 			return true;
 		}
 		return false;
-	},
-	initSpecials: function() {
-		foChar.charInfo.specialDistPoints = 33;
-		for (var special in specials) {
-			foChar.addSpecial(special, 1);
-		}
 	},
 	initSkills: function() {
 		var skill;
@@ -163,38 +260,47 @@ var foChar = {
 			foChar.addSPT(skill, 0);
 		}
 		foChar.charInfo.SP = foChar.calculations.calculateAvailSP();
+		return true;
+	},
+	initSpecials: function() {
+		foChar.setItem("foChar.charInfo.specialDistPoints=33");
+		for (var special in specials) {
+			foChar.addSpecial(special, 1);
+		}
+		return true;
 	},
 	levelUp: function(_lvl) { //if passing in a val, it's FROM level
-		var _lvl = parseInt(_lvl) || 0;
+		var lvl = parseInt(_lvl) || 0;
 
-		if (_lvl == 0 || _lvl >= foChar.charInfo.lvlCap) {
-			if (fonv_lib.DEBUG) { console.log("Cannot set Char lvl to "+_lvl); }
+		if (lvl == 0 || lvl >= foChar.charInfo.lvlCap) {
+			foChar.logger.log("Cannot set Char lvl to "+lvl);
 			return false;
 		}
-		_lvl++;
-		if (fonv_lib.DEBUG) { console.log("Char level up "+foChar.charInfo.lvl+" -> "+_lvl); }
-		foChar.charInfo.lvl = _lvl;
+		lvl++;
+		foChar.logger.log("Char level up "+foChar.charInfo.lvl+" -> "+lvl);
+		foChar.charInfo.lvl = lvl;
 		foChar.reCalculateCharInfo();
+		return true;
 	},
 	addSpecial: function(_abr, _lvl) {
 		if (_lvl > 10) {
-			if (fonv_lib.DEBUG) { console.log(_abr+" cannot be over 10"); }
+			foChar.logger.log(_abr+" cannot be over 10");
 		}else if (_lvl < 1) {
-			if (fonv_lib.DEBUG) { console.log(_abr+" cannot be less than 1"); }
+			foChar.logger.log(_abr+" cannot be less than 1");
 		}else{
-			if (fonv_lib.DEBUG) { console.log("Adding special: "+_abr+" level("+_lvl+")"); }
+			foChar.logger.log("Adding special: "+_abr+" level("+_lvl+")");
 			try { //try/catch since it may not exist until init'd
 				if (foChar.specials[_abr].lvl > _lvl) {
-					if (fonv_lib.DEBUG) { console.log("	Subtracting special: Char level (before "+foChar.specials[_abr].lvl+")"); }
+					foChar.logger.log("	Subtracting special: Char level (before "+foChar.specials[_abr].lvl+")");
 					foChar.charInfo.specialDistPoints = foChar.charInfo.specialDistPoints + (foChar.specials[_abr].lvl - _lvl);
 					foChar.specials[_abr] = {abr: _abr, lvl: _lvl, opt: specials[_abr].lvl[_lvl]};
 				}else{
 					if (foChar.charInfo.specialDistPoints > 0) {
-						if (fonv_lib.DEBUG) { console.log("	Adding special: Char level (before "+foChar.specials[_abr].lvl+")"); }
+						foChar.logger.log("	Adding special: Char level (before "+foChar.specials[_abr].lvl+")");
 						foChar.charInfo.specialDistPoints = foChar.charInfo.specialDistPoints - (_lvl - foChar.specials[_abr].lvl);
 						foChar.specials[_abr] = {abr: _abr, lvl: _lvl, opt: specials[_abr].lvl[_lvl]};
 					}else{
-						if (fonv_lib.DEBUG) { console.log("	Char has no more SPECIAL points to distribute"); }
+						foChar.logger.log("	Char has no more SPECIAL points to distribute");
 					}
 				}
 			} catch(err) {
@@ -210,7 +316,7 @@ var foChar = {
 	},
 	//add skill/perk/trait
 	addSPT: function(_title, _rank) {
-		if (fonv_lib.DEBUG) { console.log("Adding Skill/Perk/Trait: "+_title+" rank: "+_rank); }
+		foChar.logger.log("Adding Skill/Perk/Trait: "+_title+" rank: "+_rank);
 
 		if ((_rank == "undefined")) {
 			_rank = 1; //only non-skills can have zero, but perk removal can pass 0
@@ -221,16 +327,16 @@ var foChar = {
 				if (foChar.perks[_title].rank < _rank) {
 					//add perk _rank
 					if (foChar.checkQualification(_title)) {
-						if (fonv_lib.DEBUG) { console.log("addSPT: adding "+_title+" rank "+_rank); }
+						foChar.logger.log("addSPT: adding "+_title+" rank "+_rank);
 						foChar.perks[_title].rank = _rank;
 						foChar.calculations.calculatePerksBonus(_title);
 						return true;
 					}else{
-						if (fonv_lib.DEBUG) { console.log("addSPT: NOT adding "+_title+" rank "+_rank); }
+						foChar.logger.log("addSPT: NOT adding "+_title+" rank "+_rank);
 					}
 				}else{
 					//remove perk
-					if (fonv_lib.DEBUG) { console.log("addSPT: removing "+_title+" rank "+_rank); }
+					foChar.logger.log("addSPT: removing "+_title+" rank "+_rank);
 					foChar.perks[_title].rank = _rank;
 					foChar.calculations.calculatePerksBonus(_title, "remove");
 					return true;
@@ -239,19 +345,19 @@ var foChar = {
 				//character does not have perk
 				//add perk
 				if (foChar.checkQualification(_title)) {
-					if (fonv_lib.DEBUG) { console.log("addSPT: adding "+_title+" rank "+_rank); }
+					foChar.logger.log("addSPT: adding "+_title+" rank "+_rank);
 					foChar.perks[_title] = { rank: _rank };
 					foChar.calculations.calculatePerksBonus(_title);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("addSPT: NOT adding "+_title+" rank "+_rank); }
+					foChar.logger.log("addSPT: NOT adding "+_title+" rank "+_rank);
 				}
 			}
 		}else if (traits[_title]) {
 			
 			//check if char already has any trait
 			if (foChar.traits[_title]) {
-				if (fonv_lib.DEBUG) { console.log("Char already has this trait: "+_title); }
+				foChar.logger.log("Char already has this trait: "+_title);
 			}else{
 				//check if char already has two traits
 				var traitSize = 0;
@@ -267,31 +373,31 @@ var foChar = {
 						return true;
 					}
 				}else{
-					if (fonv_lib.DEBUG) { console.log("Char already has two traits."); }
+					foChar.logger.log("Char already has two traits.");
 				}
 				return false;
 			}
 		}else if (skills[_title]) {
 			if (_rank > 100) {
-				if (fonv_lib.DEBUG) { console.log("Char skill "+_title+" cannot be over 100"); }
+				foChar.logger.log("Char skill "+_title+" cannot be over 100");
 			}else if (_rank < 0) {
-				if (fonv_lib.DEBUG) { console.log("Char skill "+_title+" cannot be less than 0"); }
+				foChar.logger.log("Char skill "+_title+" cannot be less than 0");
 			}else{
 				if (foChar.skills[_title]) {
 					if (foChar.skills[_title].alloc > _rank) {
-						if (fonv_lib.DEBUG) { console.log("	Removing skill "+_title+": Char level (before "+foChar.skills[_title].alloc+")"); }
+						foChar.logger.log("	Removing skill "+_title+": Char level (before "+foChar.skills[_title].alloc+")");
 						
 						foChar.skills[_title].alloc = _rank;
 					}else{
 						if (foChar.charInfo.SP > 0) {
-							if (fonv_lib.DEBUG) { console.log("	Adding skill "+_title+": Char level (before "+foChar.skills[_title].alloc+")"); }
+							foChar.logger.log("	Adding skill "+_title+": Char level (before "+foChar.skills[_title].alloc+")");
 							foChar.skills[_title].alloc = _rank;
 						}else{
-							if (fonv_lib.DEBUG) { console.log("	Char has no more SP to distribute"); }
+							foChar.logger.log("	Char has no more SP to distribute");
 						}
 					}
 				}else{
-					if (fonv_lib.DEBUG) { console.log("	Adding skill "+_title+": Char level (init)"); }
+					foChar.logger.log("	Adding skill "+_title+": Char level (init)");
 					foChar.skills[_title] = {};
 					foChar.skills[_title].alloc = _rank;
 				};
@@ -299,7 +405,7 @@ var foChar = {
 				return true;
 			}
 		}else{
-			if (fonv_lib.DEBUG) { console.log("Not defined: "+_title); }
+			foChar.logger.log("Not defined: "+_title);
 		}
 		return false;
 	},
@@ -309,7 +415,7 @@ var foChar = {
 				foChar.taggedSkills[foChar.taggedSkills.length] = _title;
 				foChar.reCalculateCharInfo();
 		}else{
-			if (fonv_lib.DEBUG) { console.log("Cannot tag skill, char has max skills tagged ("+foChar.taggedSkillCap+")"); }
+			foChar.logger.log("Cannot tag skill, char has max skills tagged ("+foChar.taggedSkillCap+")");
 		}
 	},
 	untagSkill: function(_title) {
@@ -323,81 +429,156 @@ var foChar = {
 		foChar.reCalculateCharInfo();
 	},
 	removeTrait: function(_title) {
-		if (fonv_lib.DEBUG) { console.log("Removing Char trait: "+_title); }
+		foChar.logger.log("Removing Char trait: "+_title);
 		if (foChar.traits[_title]) {
 			foChar.calculations.calculateTraitsBonus(_title, "remove");
 			delete foChar.traits[_title];
 			foChar.reCalculateCharInfo();
-			if (fonv_lib.DEBUG) { console.log("	Char trait: "+_title+" removed."); }
+			foChar.logger.log("	Char trait: "+_title+" removed.");
 		}else{
-			if (fonv_lib.DEBUG) { console.log("	Char does not have trait: "+_title); }
+			foChar.logger.log("	Char does not have trait: "+_title);
 		}
+	},
+	addCompanion: function(_comp) {
+		foChar.logger.log("Attempting to add companion: "+_comp);
+		if (foChar.canAddCompanion(_comp)) {
+			foChar.logger.log("\tAdding companion: "+_comp);
+			foChar.companions[foChar.companions.length] = _comp;
+			return true;
+		}else{
+			return false;
+		}
+	},
+	canAddCompanion: function (_comp) {
+		//check companion is defined
+		if (companions[_comp]) {
+			//check current companions
+			if ( (foChar.companions).join(",").indexOf(_comp) == -1 ) {
+				//we don't already have this comp, check max
+				if (foChar.companions.length < foChar.compGroupLimits.getCompanionsMax()) {
+					//we're not at max, check per group
+					var compGrpCount = [];
+					
+					//create count spaces for groups
+					for (var l in foChar.compGroupLimits) {
+						if (typeof foChar.compGroupLimits[l] != "function") {
+							compGrpCount[l.toString()] = 0;
+						}
+					}
+					
+					//loop through companions and add to counts
+					for (var i = 0; i<foChar.companions.length; i++) {
+						compGrpCount[companions[foChar.companions[i]].compGroup] = compGrpCount[companions[foChar.companions[i]].compGroup] + 1;
+					}
+					
+					//finally, see if we have an open slot for the current comp we want to add
+					if ( compGrpCount[companions[_comp].compGroup] < foChar.compGroupLimits[companions[_comp].compGroup] ) {
+						return true;
+					}else{
+						foChar.logger.log("\tFailed to add companion: Already have max companions in group type (group "+companions[_comp].compGroup+", max "+foChar.compGroupLimits[companions[_comp].compGroup]+")");
+					}
+				}else{
+					foChar.logger.log("\tFailed to add companion: Already have max companions ("+foChar.compGroupLimits.getCompanionsMax()+")");
+				}
+			}else{
+				foChar.logger.log("\tFailed to add companion: Already have companion ("+_comp+")");
+			}
+		}else{
+			foChar.logger.log("\tFailed to add companion: Companion not defined ("+_comp+")");
+		}
+		return false;
+	},
+	removeCompanion: function(_comp) {
+		if (foChar.hasCompanion(_comp)) {
+			var compTemp = [];
+			for (var i = 0; i<foChar.companions.length; i++) {
+				if (foChar.companions[i] != _comp) {
+					//since we're re-ading existing companions, no need to check qualification
+					compTemp[compTemp.length] = foChar.companions[i];
+				}
+			}
+			foChar.companions = compTemp;
+		}else{
+			return false;
+		}
+		return true;
+	},
+	hasCompanion: function(_comp) {
+		if ((foChar.companions).join(",").indexOf(_comp) != -1) {
+			return true;
+		}
+		return false;
 	},
 	checkQualification: function(_title) {
 		var disqualify = false;
 		var req;
 		var title; //loop var
 
-		if (fonv_lib.DEBUG) { console.log("Checking qualification for: "+_title); }
+		foChar.logger.log("Checking qualification for: "+_title);
 
 		//check perks
 		if (perks[_title]) {
+			//skip functions
+			if (typeof perks[_title] == "function") {
+				return false;
+			}
+			
 			//found perk
 
 			//check if char already has perk
 			if (foChar.perks[_title]) {
 				//it does, check availRanks
 				if (foChar.perks[_title].rank < perks[_title].availRanks) {
-					if (fonv_lib.DEBUG) { console.log("	Char perk rank: "+foChar.perks[_title].rank+" : Qualifies"); }
-					if (fonv_lib.DEBUG) { console.log("	Perk rank: "+perks[_title].availRanks+" : Qualifies"); }
+					foChar.logger.log("	Char perk rank: "+foChar.perks[_title].rank+" : Qualifies");
+					foChar.logger.log("	Perk rank: "+perks[_title].availRanks+" : Qualifies");
 				}else{
-					if (fonv_lib.DEBUG) { console.log("	Char already has max perk rank."); }
+					foChar.logger.log("	Char already has max perk rank.");
 					disqualify = true;
 				}
 			}else{
 				for (req in perks[_title].req) {
-					if (fonv_lib.DEBUG) { console.log("	Found perk req: "+req+" : Char("+foChar.get(req)+") Perk("+perks[_title].req[req]+")"); }
+					foChar.logger.log("	Found perk req: "+req+" : Char("+foChar.get(req)+") Perk("+perks[_title].req[req]+")");
 
 					disqualify = !foChar.checkQualificationByType("UNKNOWN", req, perks[_title].req[req]);
 					if (disqualify) { break; }
 				}
 			}
 		}else if (traits[_title]) { //check traits
-			if (fonv_lib.DEBUG) { console.log("Adding trait: "+_title); }
+			foChar.logger.log("Adding trait: "+_title);
 
 			for (req in traits[_title].req) {
 				disqualify = !foChar.checkQualificationByType("UNKNOWN", req, traits[_title].req[req]);
 				if (disqualify) { break; }
 			}
 		}else if (skills[_title]) { //check skills
-			if (fonv_lib.DEBUG) { console.log("Checking by skill"); }
+			foChar.logger.log("Checking by skill");
 			disqualify = !foChar.checkQualificationByType("skill", _title);
-			if (fonv_lib.DEBUG) { console.log("by type toggled: "+disqualify); }
+			foChar.logger.log("by type toggled: "+disqualify);
 		}else if (specials[_title]) { //check specials
-			if (fonv_lib.DEBUG) { console.log("Checking by special"); }
+			foChar.logger.log("Checking by special");
 			disqualify = !foChar.checkQualificationByType("special", _title);
-			if (fonv_lib.DEBUG) { console.log("by type toggled: "+disqualify); }
+			foChar.logger.log("by type toggled: "+disqualify);
 		}else{
 				//opposite since checkQualificationByType returns true if qualified
-				if (fonv_lib.DEBUG) { console.log("Unknown type trying by type"); }
+				foChar.logger.log("Unknown type trying by type");
 				disqualify = !foChar.checkQualificationByType("UNKNOWN", _title);
-				if (fonv_lib.DEBUG) { console.log("by type toggled: "+disqualify); }
+				foChar.logger.log("by type toggled: "+disqualify);
 		}
 
 
 		if (disqualify) {
-			if (fonv_lib.DEBUG) { console.log("Char disqualified for: "+_title); }
+			foChar.logger.log("Char disqualified for: "+_title);
 			return false;
 		}
 		//qualify
-		if (fonv_lib.DEBUG) { console.log("Char qualified for: "+_title); }
+		foChar.logger.log("Char qualified for: "+_title);
 		return true;
 	},
 	checkQualificationByType: function(type, _title, req, evalBy) {
 		var typeVal;
 		if (evalBy == undefined) { evalBy = ""; }
 		if (req == undefined) { req = foChar.get(_title); }
-		if (fonv_lib.DEBUG) { console.log("checkQualificationByType: ", type, _title, req, evalBy); }
+		foChar.logger.log("checkQualificationByType: ", type, _title, req, evalBy);
 
 		switch(type) {
 			case "perk":
@@ -428,15 +609,15 @@ var foChar = {
 			default:
 				//do eval here
 				if (_title.toString() == "eval") {
-					if (fonv_lib.DEBUG) { console.log("checkQualificationByType found eval"); }
+					foChar.logger.log("checkQualificationByType found eval");
 
 					var evals = (req).split(",");
-					//console.log(req);
+					//foChar.logger.log(req);
 					//return false;
 
 					switch (evals[0]) {
 						case "OR":
-							if (fonv_lib.DEBUG) { console.log("found eval OR", evals.length); }
+							foChar.logger.log("found eval OR", evals.length);
 							for (var i=1; i<evals.length; i++) {
 								var evalVals = evals[i].split(":");
 								if (foChar.checkQualificationByType("KNOWN", evalVals[0], evalVals[1])) {
@@ -446,7 +627,7 @@ var foChar = {
 							return false;
 							break;
 						case "AND":
-							if (fonv_lib.DEBUG) { console.log("found eval AND"); }
+							foChar.logger.log("found eval AND");
 							for (var i=1; i<evals.length; i++) {
 								var evalVals = evals[i].split(":");
 								if (!foChar.checkQualificationByType("KNOWN", evalVals[0], evalVals[1])) {
@@ -460,7 +641,7 @@ var foChar = {
 						case "<=":
 						case ">=":
 						case "==":
-							if (fonv_lib.DEBUG) { console.log("found eval "+evals[0]); }
+							foChar.logger.log("found eval "+evals[0]);
 							for (var i=1; i<evals.length; i++) {
 								var evalVals = evals[i].split(":");
 								if (!foChar.checkQualificationByType("KNOWN", evalVals[0], evalVals[1], evals[0])) {
@@ -471,7 +652,7 @@ var foChar = {
 							break
 						case "PERK":
 							//test if char has a perk
-							if (fonv_lib.DEBUG) { console.log("found eval "+evals[0]); }
+							foChar.logger.log("found eval "+evals[0]);
 							for (var i=1; i<evals.length; i++) {
 								var evalVals = evals[i].split(":");
 								if (evalVals[1]) { //evalVals[1] = true or false
@@ -486,8 +667,25 @@ var foChar = {
 							}
 							return true;
 							break
+						case "COMPANION":
+							//test if char has companion
+							foChar.logger.log("found eval "+evals[0]);
+							for (var i=1; i<evals.length; i++) {
+								var evalVals = evals[i].split(":");
+								if (evalVals[1]) { //evalVals[1] = true or false
+									if (!foChar.hasCompanion(evalVals[0])) {
+										return false; //stop at first disqualification
+									}
+								}else{
+									if (!foChar.hasCompanion(evalVals[0])) {
+										return true; //stop at first qualification
+									}
+								}
+							}
+							return true;
+							break;
 						default:
-							if (fonv_lib.DEBUG) { console.log("Can't determine eval action "+evals[0]+", skipping"); }
+							foChar.logger.log("Can't determine eval action "+evals[0]+", skipping");
 					}
 				}
 		}
@@ -505,59 +703,59 @@ var foChar = {
 				break;
 			default:
 				if (evalBy == "") {
-					if (fonv_lib.DEBUG) { console.log("	Unknown req: "+req); }
+					foChar.logger.log("	Unknown req: "+req);
 				}
 		}
-		if (fonv_lib.DEBUG) { console.log("checkQualificationByType end:", type, _title, req, evalBy); }
+		foChar.logger.log("checkQualificationByType end:", type, _title, req, evalBy);
 		switch (evalBy) {
 			case ">":
 				if (foChar.get(_title) > typeVal) {
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) > typeVal", foChar.get(_title), typeVal, foChar.get(_title) > typeVal, true); }
+					foChar.logger.log("foChar.get(_title) > typeVal", foChar.get(_title), typeVal, foChar.get(_title) > typeVal, true);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) > typeVal", foChar.get(_title), typeVal, foChar.get(_title) > typeVal, false); }
+					foChar.logger.log("foChar.get(_title) > typeVal", foChar.get(_title), typeVal, foChar.get(_title) > typeVal, false);
 					return false;
 				}
 				break;
 			case ">=":
 				if (foChar.get(_title) >= typeVal) {
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) >= typeVal", foChar.get(_title), typeVal, foChar.get(_title) >= typeVal, true); }
+					foChar.logger.log("foChar.get(_title) >= typeVal", foChar.get(_title), typeVal, foChar.get(_title) >= typeVal, true);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) >= typeVal", foChar.get(_title), typeVal, foChar.get(_title) >= typeVal, false); }
+					foChar.logger.log("foChar.get(_title) >= typeVal", foChar.get(_title), typeVal, foChar.get(_title) >= typeVal, false);
 					return false;
 				}
 				break;
 			case "<":
 				if (foChar.get(_title) < typeVal) {
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) < typeVal", foChar.get(_title), typeVal, foChar.get(_title) < typeVal, true); }
+					foChar.logger.log("foChar.get(_title) < typeVal", foChar.get(_title), typeVal, foChar.get(_title) < typeVal, true);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) < typeVal", foChar.get(_title), typeVal, foChar.get(_title) < typeVal, false); }
+					foChar.logger.log("foChar.get(_title) < typeVal", foChar.get(_title), typeVal, foChar.get(_title) < typeVal, false);
 					return false;
 				}
 				break;
 			case "<=":
 				if (foChar.get(_title) <= typeVal) {
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) <= typeVal", foChar.get(_title), typeVal, foChar.get(_title) <= typeVal, true); }
+					foChar.logger.log("foChar.get(_title) <= typeVal", foChar.get(_title), typeVal, foChar.get(_title) <= typeVal, true);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) <= typeVal", foChar.get(_title), typeVal, foChar.get(_title) <= typeVal, false); }
+					foChar.logger.log("foChar.get(_title) <= typeVal", foChar.get(_title), typeVal, foChar.get(_title) <= typeVal, false);
 					return false;
 				}
 				break;
 			case "==":
 				if (foChar.get(_title) == typeVal) {
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) == typeVal", foChar.get(_title), typeVal, foChar.get(_title) == typeVal, true); }
+					foChar.logger.log("foChar.get(_title) == typeVal", foChar.get(_title), typeVal, foChar.get(_title) == typeVal, true);
 					return true;
 				}else{
-					if (fonv_lib.DEBUG) { console.log("foChar.get(_title) == typeVal", foChar.get(_title), typeVal, foChar.get(_title) == typeVal, false); }
+					foChar.logger.log("foChar.get(_title) == typeVal", foChar.get(_title), typeVal, foChar.get(_title) == typeVal, false);
 					return false;
 				}
 				break;
 		}
 		//default
-		if (fonv_lib.DEBUG) { console.log("checkQualificationByType: default, returning false"); }
+		foChar.logger.log("checkQualificationByType: default, returning false");
 		return false;
 	},
 	reCalculateCharInfo: function() {
@@ -597,6 +795,8 @@ var foChar = {
 		foChar.charInfo.throwRange = foChar.calculations.calculateThrowRange();
 		//recalc throwRate
 		foChar.charInfo.throwRate = foChar.calculations.calculateThrowRate();
+		
+		return true;
 	},
 	calculations: {
 		calculateAvailSP: function() {
@@ -801,9 +1001,9 @@ var foChar = {
 				}
 			}
 		},
-		calculatePerksBonus: function(_title, action, perkTitle) {
-			var action = action || "add";
-			var perkTitle = perkTitle || _title;
+		calculatePerksBonus: function(_title, _action, _perkTitle) {
+			var action = _action || "add";
+			var perkTitle = _perkTitle || _title;
 			if (perks[_title]) {
 				if (action == "add") {
 					//add
@@ -814,6 +1014,18 @@ var foChar = {
 							foChar.skills[res].base = foChar.skills[res].base+perks[_title].res[res];
 						}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
 							foChar.charInfo[res] = foChar.charInfo[res]+perks[_title].res[res];
+						}else if (foChar.crit[res] || foChar.crit[res] == 0) {
+							foChar.crit[res] = foChar.crit[res]+perks[_title].res[res];
+						}else if (foChar.chance[res] || foChar.chance[res] == 0) {
+							foChar.chance[res] = foChar.chance[res]+perks[_title].res[res];
+						}else if (foChar.consume[res] || foChar.consume[res] == 0) {
+							foChar.consume[res] = foChar.consume[res]+perks[_title].res[res];
+						}else if (foChar.dmg[res] || foChar.dmg[res] == 0) {
+							foChar.dmg[res] = foChar.dmg[res]+perks[_title].res[res];
+						}else if (foChar.effect[res] || foChar.effect[res] == 0) {
+							foChar.effect[res] = foChar.effect[res]+perks[_title].res[res];
+						}else if (foChar.kills[res] || foChar.kills[res] == 0) {
+							foChar.kills[res] = foChar.kills[res]+perks[_title].res[res];
 						}else if (foChar[res]) {
 							foChar[res] = foChar[res]+perks[_title].res[res];
 						}else if (res.toString() == "rank") {
@@ -830,7 +1042,7 @@ var foChar = {
 								}
 							}
 						}else{
-							if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+							foChar.logger.log("Unknown result "+res.toString()+" in "+_title);
 						}
 					}
 				}else{
@@ -842,19 +1054,31 @@ var foChar = {
 							skills[res].base = skills[res].base-perks[_title].res[res];
 						}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
 							foChar.charInfo[res] = foChar.charInfo[res]-perks[_title].res[res];
+						}else if (foChar.crit[res] || foChar.crit[res] == 0) {
+							foChar.crit[res] = foChar.crit[res]-perks[_title].res[res];
+						}else if (foChar.chance[res] || foChar.chance[res] == 0) {
+							foChar.chance[res] = foChar.chance[res]-perks[_title].res[res];
+						}else if (foChar.consume[res] || foChar.consume[res] == 0) {
+							foChar.consume[res] = foChar.consume[res]-perks[_title].res[res];
+						}else if (foChar.dmg[res] || foChar.dmg[res] == 0) {
+							foChar.dmg[res] = foChar.dmg[res]-perks[_title].res[res];
+						}else if (foChar.effect[res] || foChar.effect[res] == 0) {
+							foChar.effect[res] = foChar.effect[res]-perks[_title].res[res];
+						}else if (foChar.kills[res] || foChar.kills[res] == 0) {
+							foChar.kills[res] = foChar.kills[res]-perks[_title].res[res];
 						}else if (foChar[res]) {
 							foChar[res] = foChar[res]-perks[_title].res[res];
 						}else{
-							if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+							foChar.logger.log("Unknown result "+res.toString()+" in "+_title);
 						}
 					}
 				}
 			}else{
-				if (fonv_lib.DEBUG) { console.log("Cannot calc Perk Bonus for "+_title+", perk not found"); }
+				foChar.logger.log("Cannot calc Perk Bonus for "+_title+", perk not found");
 			}
 		},
-		calculateTraitsBonus: function(_title, action) {
-			var action = action || "add";
+		calculateTraitsBonus: function(_title, _action) {
+			var action = _action || "add";
 			if (action == "add") {
 				//add
 				for (res in traits[_title].res) {
@@ -865,8 +1089,8 @@ var foChar = {
 					}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
 						foChar.charInfo[res] = foChar.charInfo[res]+traits[_title].res[res];
 					}else{
-						if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
-						//console.log("Unknown result "+res.toString()+" in "+_title);
+						foChar.logger.log("Unknown result "+res.toString()+" in "+_title);
+						//foChar.logger.log("Unknown result "+res.toString()+" in "+_title);
 					}
 					for (skill in foChar.skills) {
 						if (foChar.skills[res] && foChar.skills[res].base < 0) {
@@ -880,13 +1104,13 @@ var foChar = {
 					if (specials[res]) {
 						specials[res].lvl = specials[res].lvl-traits[_title].res[res];
 					}else if (skills[res]) {
-						//console.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
+						//foChar.logger.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
 						skills[res].base = skills[res].base-traits[_title].res[res];
-						//console.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
+						//foChar.logger.log("skills[res]", res.toString(), traits[_title].res[res], foChar.skills[res].base);
 					}else if (foChar.charInfo[res] || foChar.charInfo[res] == 0) {
 						foChar.charInfo[res] = foChar.charInfo[res]-traits[_title].res[res];
 					}else{
-						if (fonv_lib.DEBUG) { console.log("Unknown result "+res.toString()+" in "+_title); }
+						foChar.logger.log("Unknown result "+res.toString()+" in "+_title);
 					}
 					for (skill in foChar.skills) {
 						if (foChar.skills[res] && foChar.skills[res].base < 0) {
@@ -918,6 +1142,11 @@ var foChar = {
 			return "neutral";
 		}
 	},
+	/*  get values for items
+	 *
+	 *	gets calc'd value instead of direct ref item like getItem
+	 *	skills value is actually base+alloc, which this will return
+	 */
 	get: function(setting) {
 		switch (setting) {
 			case "charLvl":
@@ -926,6 +1155,9 @@ var foChar = {
 			case "gender":
 				return foChar.charInfo.gender;
 				break;
+			case "eval":
+				return "eval string";
+				break
 		}
 		if (traits[setting]) {
 			return true;
@@ -936,6 +1168,24 @@ var foChar = {
 		if (specials[setting]) {
 			return foChar.specials[setting].lvl;
 		}
+		if (foChar.crit[setting]) {
+			return foChar.crit[setting];
+		}
+		if (foChar.chance[setting]) {
+			return foChar.chance[setting];
+		}
+		if (foChar.consume[setting]) {
+			return foChar.consume[setting];
+		}
+		if (foChar.effect[setting]) {
+			return foChar.effect[setting];
+		}
+		if (foChar.dmg[setting]) {
+			return foChar.dmg[setting];
+		}
+		if (foChar.kills[setting]) {
+			return foChar.kills[setting];
+		}
 		if (foChar.charInfo[setting]) {
 			return foChar.charInfo[setting];
 		}
@@ -943,9 +1193,138 @@ var foChar = {
 			return foChar[setting];
 		}
 
+		foChar.logger.log("Can't find: "+setting);
+		
 		return -1; //fail
-
-		if (fonv_lib.DEBUG) { console.log("Can't find: "+setting); }
+	},
+	/*
+	 *	getItem will return the passed item's value, or a ref (if item is an object)
+	 *
+	 *	can be either "obj", "prop" or a single string "obj.prop"
+	 *
+	 *	will return the deepest val/ref it can find (starting at foChar)
+	 *	or the string "ERR" if it cannot find the item
+	 *
+	 */
+	getItem: function() {
+		var lastObjRef = foChar;
+		var lastPropRef = null;
+		var itemRef = '';
+	
+		if (arguments.length > 0) {
+			for (var n=0; n < arguments.length; n++) {
+				itemRef = arguments[n];
+				i = 0;
+	
+				if ((itemRef).indexOf(".")>0) {
+					itemRef = (itemRef).split(".");
+				}
+	
+				if (itemRef.constructor.toString().indexOf("Array") != -1) {
+					//deep ref
+					while(i<itemRef.length) {
+						if (typeof lastObjRef[itemRef[i]] == "object") {
+							lastObjRef = lastObjRef[itemRef[i]];
+						}else{
+							lastPropRef = itemRef[i];
+						}
+						i++;
+					}
+				}else{
+					if (typeof lastObjRef[itemRef] == "object") {
+						lastObjRef = lastObjRef[itemRef];
+					}else{
+						lastPropRef = itemRef;
+					}
+				}
+				if (lastPropRef != null) {
+					return lastObjRef[lastPropRef];
+				}else{
+					return lastObjRef;
+				}
+			}
+		}
+		foChar.logger.log("Pass Obj.Prop to get item value");
+		return "ERR";
+	},
+	/*
+	 *	setItem will set the passed item's value
+	 *
+	 *	must be a prop, cannot set via obj={prop: value}
+	 *	use the format "obj.prop=value"
+	 *	takes multuple sets "obj1.prop1=value1", "obj2.prop2=value2"
+	 *
+	 *	will set the deepest val/ref it can find (starting at foChar)
+	 *
+	 *	returns true if ANY value is set
+	 *
+	 *	note: because the default object is foChar, if it doesn't
+	 *	already have the prop passed, setItem WILL ADD IT
+	 *
+	 */
+	setItem: function() {
+		var i = 0;
+		var lastObjRef = foChar;
+		var lastPropRef = null;
+		var value = '';
+		var itemRef = '';
+		var passedVal = '';
+		var setItemCount = 0;
+	
+		if (arguments.length > 0) {
+			for (var n=0; n < arguments.length; n++) {
+				var arg = arguments[n];
+				i = 0;
+				passedVal = arguments;
+				
+				if ((arg).indexOf("=")>0) {
+					value = (arg).split("=")[1];
+					itemRef = (arg).split("=")[0];
+	
+					//check value to see if it should be a number (defaults to string)
+					if (!isNaN(parseInt(value))) {
+						value = parseInt(value);
+					}
+				}else{
+					foChar.logger.log("setItem: No value passed in "+passedVal);
+					continue;
+				}
+				if ((itemRef).indexOf(".")>0) {
+					itemRef = (itemRef).split(".");
+				}
+	
+				if (itemRef.constructor.toString().indexOf("Array") != -1) {
+					//deep ref
+					while(i<itemRef.length) {
+						if (typeof lastObjRef[itemRef[i]] == "object") {
+							lastObjRef = lastObjRef[itemRef[i]];
+						}else{
+							lastPropRef = itemRef[i];
+						}
+						i++;
+					}
+				}else{
+					if (typeof lastObjRef[itemRef] == "object") {
+						lastObjRef = lastObjRef[itemRef];
+					}else{
+						lastPropRef = itemRef;
+					}
+				}
+				if (lastPropRef != null) {
+					lastObjRef[lastPropRef] = value;
+					setItemCount++;
+				}else{
+					/* if a JSON parser was added here, we could pass in objects as values */
+					foChar.logger.log("Unable to set item, invalid prop? Pass Obj.Prop=Value to set item");
+				}
+			}
+			if (setItemCount>0) {
+				return true;
+			}
+		}else{
+			foChar.logger.log("Pass Obj.Prop=Value to set item");
+		}
+		return false;
 	},
 	reset: function() {
 		delete foChar.charInfo; //clear out anything added/updated
@@ -953,6 +1332,33 @@ var foChar = {
 		foChar.initChar();
 
 		return true;
+	},
+	/*
+	 *	Logger object, checks for console, and for external elem to log to
+	 *	options:
+	 *		logToConsole: true/false logs to console (if available)
+	 *		logToElem: true/false appends logMsg to HTML elem (if available)
+	 *			logToElemId: id of elem to append to
+	 *
+	 */
+	logger: {
+		logToConsole: false,
+		logToElem: false,
+		logToElemId: 'fonv_lib_logMsg',
+		lastLog: '',
+				
+		log: function() {
+			if (foChar.logger.logToConsole || foChar.logger.logToElem) {
+				if (foChar.logger["logToConsole"] && window.console) {
+					console.log(arguments);
+				}
+			}
+			if (foChar.logger["logToElem"] && document.getElementById(foChar.logger.logToElemId)) {
+				foChar.logger.lastLog += arguments.toString() + "<br >";
+				document.getElementById(foChar.logger.logToElemId).innerHTML = foChar.logger.lastLog;
+			}
+			return true;
+		}
 	}
 }
 

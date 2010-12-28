@@ -39,11 +39,19 @@ Modifying:
 			Add	"SuperPerks" to the end of libs
 		
 		Assuming it contains perk definitions, this would add the new perks
-		and updating the existing ones where applicable. Technically, you
-		can update or over-ride any of the existing objects in one file,
-		AS LONG AS YOUR LIB CREATES A GLOBAL OBJECT WITH "OBJECTNAME". Keeping
-		the different objects in their own lib makes it easier for multiple
-		people to maintain, and allows better control of load order.
+		and updating the existing ones where applicable.
+		
+		Technically, you can update or over-ride any of the existing objects in
+		one file, AS LONG AS YOUR LIB CREATES A GLOBAL OBJECT WITH "OBJECTNAME".
+		
+		Define a new variable containing the new perks like "perks_SuperPerks".
+		Then use the code:
+			Object.extend(perks, perks_SuperPerks);
+		
+		This will add the perks defined in SuperPerks to the perks object.
+		
+		Keeping	the different objects in their own lib makes it easier for
+		multiple people to maintain, and allows better control of load order.
 
 */
 var fonv_lib = {
@@ -52,15 +60,16 @@ var fonv_lib = {
 	scriptPath: '',
 	DEBUG: false, //true here prints a lot to the console, firebug recommended
 	libs: [
-		'fonv_lib-perks',      //add perks      -
-		'fonv_lib-karma',      //add karma       |
-		'fonv_lib-skills',     //add skills      |
-		'fonv_lib-specials',   //add specials    |
-		'fonv_lib-traits',     //add traits      |- load order doesn't matter
-		'fonv_lib-xp',         //add experience  |
-		'fonv_lib-challenges', //add challenges  |
-		'fonv_lib-companions', //add companions  |
-		'fonv_lib-foChar',     //build a char   -
+		'fonv_lib-perks',         //add perks      -
+		'fonv_lib-karma',         //add karma       |
+		'fonv_lib-skills',        //add skills      |
+		'fonv_lib-specials',      //add specials    |
+		'fonv_lib-traits',        //add traits      |- load order doesn't matter
+		'fonv_lib-xp',            //add experience  |
+		'fonv_lib-challenges',    //add challenges  |
+		'fonv_lib-companions',    //add companions  |
+		'fonv_lib-foChar',        //build a char   -
+		'fonv_lib-dlc_DeadMoney', //DLC Dead Money
 		'fonv_lib-libHelpers'  //extend basic libs. must load after basic libs
 	],
 	load: function() {
